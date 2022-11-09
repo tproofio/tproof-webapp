@@ -64,7 +64,7 @@ export const useUploadFiles = (): UseUploadFilesResponse => {
           setStatus({
             ...status,
             uploadPerc: tmpStatusUploadPerc
-          })
+          });
         });
         await sourceFileUpload.done();
       }

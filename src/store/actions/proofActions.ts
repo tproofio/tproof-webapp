@@ -147,7 +147,7 @@ export const loadProofs = createAsyncThunk<Proof[], {address: address, network: 
   async (params, thunkAPI) => {
 
     // run the GET calling the lambda function
-    const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://4hxyksb43alzpuu7fphgfdfa4q0scsgl.lambda-url.eu-west-1.on.aws", {
+    const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://og6meua7fqc6c7qjxuezxma6uq0wcvjq.lambda-url.eu-west-1.on.aws", {
       params: {
         owner: params.address,
         network: params.network
