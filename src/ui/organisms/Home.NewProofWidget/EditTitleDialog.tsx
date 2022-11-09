@@ -12,7 +12,7 @@ import {
   Typography
 } from "@mui/material";
 import {theme} from "../../../GlobalStyles";
-import {useAppDispatch} from "../../../hooks/reduxHooks";
+import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
 import {proofReducerActions} from "../../../store/reducers/proof";
 import {CopyAll} from "@mui/icons-material";
 

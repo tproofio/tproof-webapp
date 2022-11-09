@@ -9,7 +9,6 @@ import S3Manager from "../../utils/aws/s3Manager";
 import {OwnedNftsResponse} from "alchemy-sdk";
 import {fromTokenIdToChain} from "../../utils/Tools/Web3Management";
 import axios, {AxiosResponse} from "axios";
-import {RootState} from "../index";
 
 
 /** -- ACTIONS */
@@ -292,7 +291,7 @@ export const generateProofs = createAsyncThunk<string, GenerateProofActionParams
         .on('receipt', function(receipt: string){
           thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
           thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(0));
-          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: (thunkAPI.getState() as RootState).userAccount.chainId}));
+          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: 555 }));  // TODO insert the correct ChainId reading from the hook (do that before getting here, as if the user changes the chain after tx sends, this might generate strange behaviour)
           thunkAPI.dispatch(proofReducerActions.emptyProofToBeMinted());
         })
         .on('error', (e: any) => {

@@ -11,10 +11,11 @@ import {
   Typography
 } from "@mui/material";
 import {theme} from "../../../GlobalStyles";
-import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux/reduxHooks";
 import {proofReducerActions} from "../../../store/reducers/proof";
 import {useWeb3} from "../../../hooks/useWeb3";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useAccount, useNetwork} from "wagmi";
 
 /**
  *
@@ -30,8 +31,8 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
   const [nextChangeMintTxCloseModal, setNextChangeMintTxCloseModal] = useState<boolean>(false);
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
+  const { address: connectedWalletAddress } = useAccount();
+  const { chain } = useNetwork();
   const mintingTx = useAppSelector(state => state.proof.mintingTx);
 
   useEffect(() => {
@@ -54,9 +55,9 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
         address: connectedWalletAddress,
         newTitle: newTitleTmp,
         nftId: props.nftId,
-        nftAddress: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ADDRESS,
-        nftAbi: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ABI,
-        chainId: chainId
+        nftAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS,
+        nftAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ABI,
+        chainId: chain?.id
       }));
     }
   }
@@ -92,7 +93,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
           <DialogContent sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
             <CircularProgress/>
             <Typography variant={"body1"} sx={{mt: 1}}>
-              Follow your transaction on <a href={`${CHAIN_DETAILS[chainId].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
+              Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
             </Typography>
           </DialogContent>
       }

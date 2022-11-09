@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
+import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
 import {useWeb3} from "../../../hooks/useWeb3";
 import {Box, Grid, Typography, useMediaQuery} from "@mui/material";
 import {theme} from "../../../GlobalStyles";
@@ -12,6 +12,7 @@ import UnsupportedChainErrorMessage from "../Home/UnsupportedChainErrorMessage";
 import {useNavigate} from "react-router-dom";
 import {RouteKey} from "../../../App.Routes";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useAccount, useNetwork} from "wagmi";
 
 /**
  *
@@ -25,30 +26,30 @@ const DApp: React.FC<IDApp> = (props) => {
   const web3 = useWeb3();
   const navigate = useNavigate();
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
+  const { address: connectedWalletAddress } = useAccount();
+  const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (connectedWalletAddress !== "" && isSupportedChainId(chainId) && chainId>0) {
+    if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
 
       // TODO implement event listener subscription to avoid reload all proof, but just the newly minted proof, or listen to status changes
       dispatch(proofReducerActions.loadProofs({
         address: connectedWalletAddress,
-        network: chainId
+        network: chain?.id
       }));
 
       dispatch(proofReducerActions.loadPrices({
         web3: web3,
-        routerAbi: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ABI,
-        routerAddress: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ADDRESS
+        routerAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ABI,
+        routerAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ADDRESS
       }))
 
-    } else if (connectedWalletAddress === "") {
+    } else if (!connectedWalletAddress) {
       // wallet not connected, send back to homepage
       navigate(RouteKey.Home);
     }
-  }, [connectedWalletAddress, chainId]);
+  }, [connectedWalletAddress, chain?.id]);
 
   return (
     <Box width={"100%"} minHeight={"100vh"}
@@ -69,7 +70,7 @@ const DApp: React.FC<IDApp> = (props) => {
         <Grid item md={1} sm={0}/>
       </Grid>
       {
-        !isSupportedChainId(chainId) ?
+        !isSupportedChainId(chain?.id) ?
           <UnsupportedChainErrorMessage/>
           :
           ""

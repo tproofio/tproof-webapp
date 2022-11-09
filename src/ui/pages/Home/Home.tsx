@@ -3,9 +3,9 @@ import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import CommonHeader from "../../organisms/Common.Header/Common.Header";
 import {theme} from "../../../GlobalStyles";
-import {useAppSelector} from "../../../hooks/reduxHooks";
 import {RouteKey} from "../../../App.Routes";
 import Web3ModalWrapper from "../../atoms/Web3ModalWrapper/Web3ModalWrapper";
+import {useAccount} from "wagmi";
 
 /**
  *
@@ -17,11 +17,11 @@ const Home: React.FC<IHome> = (props) => {
 
   const navigate = useNavigate();
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
+  const { address: connectedWalletAddress } = useAccount();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (connectedWalletAddress !== "") {
+    if (connectedWalletAddress) {
       navigate(RouteKey.dApp);
     }
   }, [connectedWalletAddress]);

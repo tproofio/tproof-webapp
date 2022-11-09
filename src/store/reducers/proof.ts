@@ -38,12 +38,12 @@ import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types
  */
 export interface ProofReducer extends BaseReducer {
   mintedProofs: Proof[],
-  mintedProofsLoading: boolean,
+  mintedProofsLoading: boolean,  // remove
   proofToBeMinted: ProofToMint[],
-  proofsToBeMintedHasEvaluationPending: boolean,
-  uploadingFileToPublish: boolean,
-  newProofActiveStep: number,
-  mintingTx: string,
+  proofsToBeMintedHasEvaluationPending: boolean,  // remove
+  uploadingFileToPublish: boolean,  // remove
+  newProofActiveStep: number,  // why?
+  mintingTx: string,  // remove
   price: Prices | undefined
 }
 

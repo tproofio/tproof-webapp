@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {Box, Button, Typography} from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux/reduxHooks";
 import {proofReducerActions} from "../../../store/reducers/proof";
-import {useFileListCache} from "../../../hooks/fileListHook";
+import {useFileListCache} from "../../../hooks/utils/fileListHook";
 import {useWeb3} from "../../../hooks/useWeb3";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useAccount, useNetwork} from "wagmi";
 
 /**
  *
@@ -18,12 +19,12 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
   const fileListCache = useFileListCache();
   const web3 = useWeb3();
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
+  const { address: connectedWalletAddress } = useAccount();
+  const { chain } = useNetwork();
   const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
   const activeStepNum = useAppSelector(state => state.proof.newProofActiveStep);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
   const mintingTx = useAppSelector(state => state.proof.mintingTx);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
   const price = useAppSelector(state => state.proof.price);
 
   // launch the upload of objects on S3
@@ -73,11 +74,11 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
       web3: web3,
       address: connectedWalletAddress,
       proofs: proofToBeMinted,
-      delegatorAddress: CONTRACTS_DETAILS[chainId].DELEGATOR_ADDRESS,
-      nftAbi: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ABI,
-      nftAddress: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ADDRESS,
-      routerAddress: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ADDRESS,
-      routerAbi: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ABI,
+      delegatorAddress: CONTRACTS_DETAILS[chain?.id].DELEGATOR_ADDRESS,
+      nftAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ABI,
+      nftAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS,
+      routerAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ADDRESS,
+      routerAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ABI,
       price
     }));
   }
@@ -111,7 +112,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
               // show tx ID if we're minting, with a link to Etherescan
               mintingTx !== "" ?
                 <Typography variant="body2" sx={{mt: 1}}>
-                  Follow your transaction on <a href={`${CHAIN_DETAILS[chainId].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
+                  Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
                 </Typography>
                 :
                 ""
@@ -124,7 +125,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
       {
         proofToBeMinted.length === 0 && activeStepNum===0 ?
           <Box width="100%" display="flex" alignItems={"center"} justifyContent={"center"}>
-            <Button variant="contained" component="label" disabled={connectedWalletAddress === ""} sx={{width: 200}}>
+            <Button variant="contained" component="label" disabled={connectedWalletAddress === undefined} sx={{width: 200}}>
               Select File
               <input hidden accept="*/*" multiple type="file" onChange={fileSelectedAppend} />
             </Button>

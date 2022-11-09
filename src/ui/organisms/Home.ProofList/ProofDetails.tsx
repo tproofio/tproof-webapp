@@ -15,11 +15,11 @@ import VerificationStatusTag from "./VerificationStatusTag";
 import {format} from 'date-fns';
 import SingleExpandedField from "./SingleExpandedField";
 import * as ellipsize from "ellipsize";
-import {useAppSelector} from "../../../hooks/reduxHooks";
 import {ProofVerificationStatus} from "../../../utils/ProjectTypes/Project.enum";
 import EditTitleDescriptionDialog from "./EditTitleDescriptionDialog";
 import {theme} from "../../../GlobalStyles";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useNetwork} from "wagmi";
 
 /**
  *
@@ -32,7 +32,7 @@ const ProofDetails: React.FC<IProofDetails> = (props) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [openEditTitleDialog, setOpenEditTitleDialog] = useState<boolean>(false);
 
-  const chainId = useAppSelector(state => state.userAccount.chainId);
+  const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleChange = () => {
@@ -40,14 +40,14 @@ const ProofDetails: React.FC<IProofDetails> = (props) => {
   }
 
   const goToEtherscan = () => {
-    let collecttionAddress = CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ADDRESS;
-    window.open(`${CHAIN_DETAILS[chainId].EXPLORER_URL}/token/${collecttionAddress}?a=${props.proof.id}`, "_blank");
+    let collecttionAddress = CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
+    window.open(`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/token/${collecttionAddress}?a=${props.proof.id}`, "_blank");
   }
 
   const goToOpenSea = () => {
-    let testnetOs = CHAIN_DETAILS[chainId].IS_TESTNET ? "testnets." : "";
-    let openseaChainNAme = CHAIN_DETAILS[chainId].OPENSEA_CHAIN_NAME;
-    let collecttionAddress = CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ADDRESS;
+    let testnetOs = CHAIN_DETAILS[chain?.id].IS_TESTNET ? "testnets." : "";
+    let openseaChainNAme = CHAIN_DETAILS[chain?.id].OPENSEA_CHAIN_NAME;
+    let collecttionAddress = CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
     window.open(`https://${testnetOs}opensea.io/assets/${openseaChainNAme}/${collecttionAddress}/${props.proof.id}`, "_blank");
   }
 
