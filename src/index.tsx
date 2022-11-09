@@ -30,7 +30,7 @@ import {ConnectKitButton, ConnectKitProvider, getDefaultClient} from "connectkit
 //   });
 // }
 
-const chains = [chain.polygon, chain.goerli, chain.hardhat];
+const chains = [chain.goerli, chain.polygon, chain.hardhat];
 const client = createClient(
   getDefaultClient({
     appName: "tProof",
@@ -50,15 +50,6 @@ root.render(
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <App />
-              <ConnectKitButton.Custom>
-                {({ isConnected, isConnecting, show, hide, address, ensName }) => {
-                  return (
-                    <button onClick={ show }>
-                      {isConnected ? address : "Custom Connect"}
-                    </button>
-                  );
-                }}
-              </ConnectKitButton.Custom>
             </ThemeProvider>
           </StyledEngineProvider>
         </ConnectKitProvider>

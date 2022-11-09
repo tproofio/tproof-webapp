@@ -116,37 +116,6 @@ export const editTitleProofToMint: CaseReducer<ProofReducer, PayloadAction<{ pos
 }
 
 /**
- * Performs the upload of files that will require public verification on S3
- * @type {AsyncThunk<ProofToMint[], { pos: number, file: File, hash: string, MIMEType: string, storageType: string }>} - pos is the position of file in the list of files
- */
-export const uploadFilesToS3 = createAsyncThunk<boolean, { pos: number, file: File, hash: string, MIMEType: string, storageType: string }[]>(
-  'proof/uploadFilesToS3',
-  async (params, thunkAPI) => {
-
-    // creates all the promises, one for each file
-    for (let fi=0; fi<params.length; fi++) {
-      let f = params[fi];
-      let sourceFileUpload = await S3Manager.createS3ManagedUpload(
-        "temporary-files-tproof-io",
-        "0x" + f.hash,
-        f.file,
-        {"Content-Type": f.MIMEType, "sotrageType": f.storageType}  // TODO Content-Type should be a string in the format */*
-      );
-      sourceFileUpload.on("httpUploadProgress", (progress) => {
-        // TODO re-enable the abort of uploads
-        // if (shouldStopUpload()) { sourceFileUpload.abort(); }
-        thunkAPI.dispatch(proofReducerActions.setUploadPerc({pos: f.pos, perc: Math.round(progress.loaded * 100 / progress.total)}))
-      });
-      await sourceFileUpload.done();
-    }
-
-    // when completed, go to step1 (minting)
-    thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(1));
-
-    return true;
-  });
-
-/**
  * Add more files in the list of proofs to be minted
  * @type {AsyncThunk<ProofToMint[], { fileList: FileList, ids: string[] }>} - the list of ids to pass should match the files passed to be added, with their IDs
  */
@@ -229,15 +198,20 @@ export const loadPrices = createAsyncThunk<Prices, {web3: Web3, routerAbi: AbiIt
   'proof/loadPrices',
   async (params, thunkAPI) => {
 
-    let router = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
+    // let router = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
 
     // get how many NFTs has a user
-    let mintPrice = await router.methods.MINT_PRICE().call();
-    let verifyPice = await router.methods.VERIFICATION_PRICE().call();
+    // let mintPrice = await router.methods.MINT_PRICE().call();
+    // let verifyPice = await router.methods.VERIFICATION_PRICE().call();
 
+    // TODO fake return as we need to edit how web3 is passed
+    // return {
+    //   mint: parseFloat(params.web3.utils.fromWei(mintPrice)),
+    //   verification: parseFloat(params.web3.utils.fromWei(verifyPice))
+    // };
     return {
-      mint: parseFloat(params.web3.utils.fromWei(mintPrice)),
-      verification: parseFloat(params.web3.utils.fromWei(verifyPice))
+      mint: 3,
+      verification: 10
     };
   }
 )

@@ -6,6 +6,7 @@ import {useFileListCache} from "../../../hooks/utils/fileListHook";
 import {useWeb3} from "../../../hooks/useWeb3";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
+import {useUploadFiles} from "../../../hooks/aws/s3/useUploadFiles";
 
 /**
  *
@@ -21,6 +22,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
+  const useUploadFilesObj = useUploadFiles();
   const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
   const activeStepNum = useAppSelector(state => state.proof.newProofActiveStep);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
@@ -42,9 +44,24 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
             storageType: "ArweaveV1"
           });
       }
-      dispatch(proofReducerActions.uploadFilesToS3(uploadObjects));
+      useUploadFilesObj.upload(uploadObjects);
     }
   }, [uploadingFileToPublish]);
+
+  // update the upload percentage
+  useEffect(() => {
+    useUploadFilesObj.uploadPerc.forEach( el =>
+      dispatch(proofReducerActions.setUploadPerc({pos: el.pos, perc: el.perc}))
+    )
+  }, [useUploadFilesObj.uploadPerc]);
+
+  // when upload completes, go to step 1 and set the upload files completed
+  useEffect(() => {
+    if (useUploadFilesObj.completed) {
+      dispatch(proofReducerActions.toggleUploadingFileToPublish(false));
+      dispatch(proofReducerActions.setNewProofActiveStep(1));
+    }
+  }, [useUploadFilesObj.completed])
 
   /**
    * Appends the files selected by the user to the list of files to remember
