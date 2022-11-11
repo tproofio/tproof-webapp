@@ -14,6 +14,7 @@ export interface LoadPricesResult {
 /**
  * @param {boolean} completed
  * @param {string} error
+ * @param {LoadPricesResult} result
  */
 export interface UseLoadPricesState {
   completed: boolean,
