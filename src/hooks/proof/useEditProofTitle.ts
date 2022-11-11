@@ -27,7 +27,7 @@ export interface UseEditProofTitleResponse extends UseEditProofTitleState {
   editProofTitle: (params: EditProofTitleParams) => void
 }
 
-export const useEditProofTitle = () => {
+export const useEditProofTitle = (): UseEditProofTitleResponse => {
   const [status, setStatus] = useState<UseEditProofTitleState>({
     completed: false, error: "", transactionHash: ""});
   const network = useNetwork();
@@ -40,7 +40,7 @@ export const useEditProofTitle = () => {
     onSuccess: (data) => { setStatus({completed: true, transactionHash: "", error: ""})}
   });
   const contractWrite = useContractWrite(config);
-  const editProofTitle = (params: EditProofTitleParams) => {
+  const editProofTitle = (params: EditProofTitleParams): void => {
     new Promise(async (resolve, reject) => {
       await contractWrite.writeAsync({
         recklesslySetUnpreparedArgs: [
