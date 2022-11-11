@@ -7,6 +7,8 @@ import {Provider} from "react-redux";
 import {store} from "./store";
 import {CssBaseline, StyledEngineProvider, ThemeProvider} from "@mui/material";
 import {theme} from "./GlobalStyles";
+import {chain, createClient, WagmiConfig} from "wagmi";
+import {ConnectKitButton, ConnectKitProvider, getDefaultClient} from "connectkit";
 
 // set up sentry only if in a production mode
 // TODO insert sentry
@@ -28,17 +30,30 @@ import {theme} from "./GlobalStyles";
 //   });
 // }
 
+const chains = [chain.goerli, chain.polygon, chain.hardhat];
+const client = createClient(
+  getDefaultClient({
+    appName: "tProof",
+    autoConnect: false,
+    chains
+  }),
+);
+
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <WagmiConfig client={client}>
+        <ConnectKitProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
+        </ConnectKitProvider>
+      </WagmiConfig>
     </Provider>
   </React.StrictMode>
 );

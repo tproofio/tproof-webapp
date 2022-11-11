@@ -2,12 +2,9 @@ import React from 'react';
 import {BrowserRouter} from "react-router-dom";
 import {Route, Routes} from "react-router";
 import {routes} from "./App.Routes";
-import {useAppDispatch} from "./hooks/reduxHooks";
 
 
 function App(): JSX.Element {
-
-  const dispatch = useAppDispatch();
 
   return (
     <BrowserRouter>

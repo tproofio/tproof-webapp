@@ -9,7 +9,6 @@ import S3Manager from "../../utils/aws/s3Manager";
 import {OwnedNftsResponse} from "alchemy-sdk";
 import {fromTokenIdToChain} from "../../utils/Tools/Web3Management";
 import axios, {AxiosResponse} from "axios";
-import {RootState} from "../index";
 
 
 /** -- ACTIONS */
@@ -117,37 +116,6 @@ export const editTitleProofToMint: CaseReducer<ProofReducer, PayloadAction<{ pos
 }
 
 /**
- * Performs the upload of files that will require public verification on S3
- * @type {AsyncThunk<ProofToMint[], { pos: number, file: File, hash: string, MIMEType: string, storageType: string }>} - pos is the position of file in the list of files
- */
-export const uploadFilesToS3 = createAsyncThunk<boolean, { pos: number, file: File, hash: string, MIMEType: string, storageType: string }[]>(
-  'proof/uploadFilesToS3',
-  async (params, thunkAPI) => {
-
-    // creates all the promises, one for each file
-    for (let fi=0; fi<params.length; fi++) {
-      let f = params[fi];
-      let sourceFileUpload = await S3Manager.createS3ManagedUpload(
-        "temporary-files-tproof-io",
-        "0x" + f.hash,
-        f.file,
-        {"Content-Type": f.MIMEType, "sotrageType": f.storageType}  // TODO Content-Type should be a string in the format */*
-      );
-      sourceFileUpload.on("httpUploadProgress", (progress) => {
-        // TODO re-enable the abort of uploads
-        // if (shouldStopUpload()) { sourceFileUpload.abort(); }
-        thunkAPI.dispatch(proofReducerActions.setUploadPerc({pos: f.pos, perc: Math.round(progress.loaded * 100 / progress.total)}))
-      });
-      await sourceFileUpload.done();
-    }
-
-    // when completed, go to step1 (minting)
-    thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(1));
-
-    return true;
-  });
-
-/**
  * Add more files in the list of proofs to be minted
  * @type {AsyncThunk<ProofToMint[], { fileList: FileList, ids: string[] }>} - the list of ids to pass should match the files passed to be added, with their IDs
  */
@@ -179,7 +147,7 @@ export const loadProofs = createAsyncThunk<Proof[], {address: address, network: 
   async (params, thunkAPI) => {
 
     // run the GET calling the lambda function
-    const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://4hxyksb43alzpuu7fphgfdfa4q0scsgl.lambda-url.eu-west-1.on.aws", {
+    const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://og6meua7fqc6c7qjxuezxma6uq0wcvjq.lambda-url.eu-west-1.on.aws", {
       params: {
         owner: params.address,
         network: params.network
@@ -230,15 +198,20 @@ export const loadPrices = createAsyncThunk<Prices, {web3: Web3, routerAbi: AbiIt
   'proof/loadPrices',
   async (params, thunkAPI) => {
 
-    let router = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
+    // let router = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
 
     // get how many NFTs has a user
-    let mintPrice = await router.methods.MINT_PRICE().call();
-    let verifyPice = await router.methods.VERIFICATION_PRICE().call();
+    // let mintPrice = await router.methods.MINT_PRICE().call();
+    // let verifyPice = await router.methods.VERIFICATION_PRICE().call();
 
+    // TODO fake return as we need to edit how web3 is passed
+    // return {
+    //   mint: parseFloat(params.web3.utils.fromWei(mintPrice)),
+    //   verification: parseFloat(params.web3.utils.fromWei(verifyPice))
+    // };
     return {
-      mint: parseFloat(params.web3.utils.fromWei(mintPrice)),
-      verification: parseFloat(params.web3.utils.fromWei(verifyPice))
+      mint: 3,
+      verification: 10
     };
   }
 )
@@ -292,7 +265,7 @@ export const generateProofs = createAsyncThunk<string, GenerateProofActionParams
         .on('receipt', function(receipt: string){
           thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
           thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(0));
-          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: (thunkAPI.getState() as RootState).userAccount.chainId}));
+          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: 555 }));  // TODO insert the correct ChainId reading from the hook (do that before getting here, as if the user changes the chain after tx sends, this might generate strange behaviour)
           thunkAPI.dispatch(proofReducerActions.emptyProofToBeMinted());
         })
         .on('error', (e: any) => {

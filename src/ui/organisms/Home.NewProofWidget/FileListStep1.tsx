@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {Box, Grid, Tooltip, Typography} from "@mui/material";
-import {useAppSelector} from "../../../hooks/reduxHooks";
+import {useAppSelector} from "../../../hooks/redux/reduxHooks";
 import {Edit} from "@mui/icons-material";
 import EditTitleDialog from "./EditTitleDialog";
 

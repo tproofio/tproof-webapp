@@ -1,18 +1,15 @@
 import {combineReducers} from "redux";
 import {UiReducer, uiReducerSlice} from "./ui";
-import {UserAccountReducer, userAccountReducerSlice} from "./userAccount";
 import {ErrorsEnum} from "../../utils/ProjectTypes/Errors.enum";
 import {ProofReducer, proofReducerSlice} from "./proof";
 
 interface RootReducer {
   ui: UiReducer,
-  userAccount: UserAccountReducer,
   proof: ProofReducer,
 }
 
 const rootReducer = combineReducers<RootReducer>({
   ui: uiReducerSlice.reducer,
-  userAccount: userAccountReducerSlice.reducer,
   proof: proofReducerSlice.reducer,
 });
 

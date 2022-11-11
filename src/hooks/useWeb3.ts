@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import {useProvider} from "wagmi";
 
 /**
  * Stores the global web3 provider variable, that is generated once provider connects and its retrievable
@@ -8,20 +9,8 @@ import Web3 from "web3";
  */
 
 export let web3: Web3;
-export let provider: any;
-
-export const loadWeb3 = (intProvider:any) => {
-  provider = intProvider;
-  web3 = new Web3(intProvider);
-}
-
-export const closeProvider = () => {
-  if (provider.disconnect) {
-    provider.disconnect();
-  }
-  provider = null;
-}
 
 export const useWeb3 = () => {
-  return web3;
+  const provider = useProvider();
+  return new Web3(provider as any);
 }

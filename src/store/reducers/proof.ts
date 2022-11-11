@@ -15,8 +15,7 @@ import {
   setUploadPerc,
   toggleFileVerificationToProofToMint,
   toggleFileVerificationToProofToMint_All,
-  toggleUploadingFileToPublish,
-  uploadFilesToS3
+  toggleUploadingFileToPublish
 } from "../actions/proofActions";
 import {ErrorsEnum} from "../../utils/ProjectTypes/Errors.enum";
 import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
@@ -38,12 +37,12 @@ import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types
  */
 export interface ProofReducer extends BaseReducer {
   mintedProofs: Proof[],
-  mintedProofsLoading: boolean,
+  mintedProofsLoading: boolean,  // remove
   proofToBeMinted: ProofToMint[],
-  proofsToBeMintedHasEvaluationPending: boolean,
-  uploadingFileToPublish: boolean,
-  newProofActiveStep: number,
-  mintingTx: string,
+  proofsToBeMintedHasEvaluationPending: boolean,  // remove
+  uploadingFileToPublish: boolean,  // remove
+  newProofActiveStep: number,  // why?
+  mintingTx: string,  // remove
   price: Prices | undefined
 }
 
@@ -121,18 +120,6 @@ export const proofReducerSlice = createSlice({
         state.proofsToBeMintedHasEvaluationPending = false;
       })
 
-      /** Upload files to be verified on S3 */
-      builder.addCase(uploadFilesToS3.fulfilled, (state, action) => {
-        state.uploadingFileToPublish = false;
-      })
-      builder.addCase(uploadFilesToS3.pending, (state, action) => {
-        state.uploadingFileToPublish = true;
-      })
-      builder.addCase(uploadFilesToS3.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0003, message: "", action: "proof/uploadFilesToS3"};
-        state.uploadingFileToPublish = false;
-      })
-
       /** Mint Tx */
       builder.addCase(generateProofs.fulfilled, (state, action) => {
         state.mintingTx = action.payload;
@@ -168,7 +155,6 @@ export const proofReducerActions = {
   loadPrices: loadPrices,
   loadProofs: loadProofs,
   addProofsToBeMinted: addProofsToBeMinted,
-  uploadFilesToS3: uploadFilesToS3,
   generateProofs: generateProofs,
   editTile: editTile
 }
