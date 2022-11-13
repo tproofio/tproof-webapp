@@ -1,10 +1,10 @@
-import {Proof} from "../../utils/ProjectTypes/Project.types";
+import {Proof} from "../../../utils/ProjectTypes/Project.types";
 import {useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {OwnedNftsResponse} from "alchemy-sdk";
 import {useAccount, useNetwork} from "wagmi";
-import {fromTokenIdToChain} from "../../utils/Tools/Web3Management";
-import {Chain, ProofVerificationStatus} from "../../utils/ProjectTypes/Project.enum";
+import {fromTokenIdToChain} from "../../../utils/Tools/Web3Management";
+import {Chain, ProofVerificationStatus} from "../../../utils/ProjectTypes/Project.enum";
 
 /**
  * @param {boolean} completed

@@ -1,8 +1,7 @@
-import {LoadPricesResult} from "./useLoadPrices";
 import {useEffect, useState} from "react";
-import {Prices, ProofToMint} from "../../utils/ProjectTypes/Project.types";
-import {useAccount, useContract, useContractWrite, useNetwork, usePrepareContractWrite, useSigner} from "wagmi";
-import {CONTRACTS_DETAILS} from "../../utils/constants";
+import {Prices, ProofToMint} from "../../../utils/ProjectTypes/Project.types";
+import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
+import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {ethers} from "ethers";
 
 export type GenerateProofParams = {

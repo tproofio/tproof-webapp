@@ -8,7 +8,7 @@ import {store} from "./store";
 import {CssBaseline, StyledEngineProvider, ThemeProvider} from "@mui/material";
 import {theme} from "./GlobalStyles";
 import {chain, createClient, WagmiConfig} from "wagmi";
-import {ConnectKitButton, ConnectKitProvider, getDefaultClient} from "connectkit";
+import {ConnectKitProvider, getDefaultClient} from "connectkit";
 
 // set up sentry only if in a production mode
 // TODO insert sentry

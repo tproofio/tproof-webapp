@@ -13,6 +13,7 @@ import {useNavigate} from "react-router-dom";
 import {RouteKey} from "../../../App.Routes";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
+import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
 
 /**
  *
@@ -25,19 +26,21 @@ const DApp: React.FC<IDApp> = (props) => {
   const dispatch = useAppDispatch();
   const web3 = useWeb3();
   const navigate = useNavigate();
+  const loadProofs = useLoadProofs();
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
+    if (loadProofs.completed)
+      dispatch(proofReducerActions.setUserMintedProofs(loadProofs.result));
+  }, [loadProofs.completed])  // TODO insert the check also in the loop to dispatch the set of the loop state in the redux store. Organize maybe etter the redux store, for both data and data-loading state
+
+  useEffect(() => {
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
 
-      // TODO implement event listener subscription to avoid reload all proof, but just the newly minted proof, or listen to status changes
-      dispatch(proofReducerActions.loadProofs({
-        address: connectedWalletAddress,
-        network: chain?.id
-      }));
+      loadProofs.loadProofs();
 
       dispatch(proofReducerActions.loadPrices({
         web3: web3,

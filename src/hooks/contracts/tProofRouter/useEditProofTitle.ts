@@ -1,8 +1,6 @@
 import {useState} from "react";
-import {GenerateProofParams, UseGenerateProofsState} from "./useGenerateProofs";
 import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
-import {CONTRACTS_DETAILS} from "../../utils/constants";
-import {ethers} from "ethers";
+import {CONTRACTS_DETAILS} from "../../../utils/constants";
 
 export type EditProofTitleParams = {
   nftId: string,

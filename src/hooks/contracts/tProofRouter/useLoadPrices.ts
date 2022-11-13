@@ -1,6 +1,6 @@
-import {useState} from "react";
+  import {useState} from "react";
 import {useContract, useNetwork, useProvider} from "wagmi";
-import {CONTRACTS_DETAILS} from "../../utils/constants";
+import {CONTRACTS_DETAILS} from "../../../utils/constants";
 
 /**
  * @param {number} mint

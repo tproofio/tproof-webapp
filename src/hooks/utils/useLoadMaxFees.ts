@@ -1,4 +1,3 @@
-import {EditProofTitleParams, UseEditProofTitleState} from "../proof/useEditProofTitle";
 import {ethers} from "ethers";
 import axios from "axios";
 import {useState} from "react";

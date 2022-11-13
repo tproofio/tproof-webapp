@@ -5,7 +5,6 @@ import {ProofReducer, proofReducerActions} from "../reducers/proof";
 import {AbiItem} from 'web3-utils';
 import {Chain, ProofVerificationStatus} from "../../utils/ProjectTypes/Project.enum";
 import {fileToHash} from "../../utils/Tools/FileManagement";
-import S3Manager from "../../utils/aws/s3Manager";
 import {OwnedNftsResponse} from "alchemy-sdk";
 import {fromTokenIdToChain} from "../../utils/Tools/Web3Management";
 import axios, {AxiosResponse} from "axios";
@@ -100,6 +99,16 @@ export const setNewProofActiveStep: CaseReducer<ProofReducer, PayloadAction<numb
 export const setMintTxHash: CaseReducer<ProofReducer, PayloadAction<string>> =
   (state, action) => {
     state.mintingTx = action.payload;
+}
+
+/**
+ * Sets the minted proofs of the user
+ * @param {Draft<ProofReducer>} state
+ * @param {PayloadAction<Proof[]>} action - list of the proofs fetched
+ */
+export const setUserMintedProofs: CaseReducer<ProofReducer, PayloadAction<Proof[]>> =
+  (state, action) => {
+    state.mintedProofs = action.payload;
 }
 
 /**

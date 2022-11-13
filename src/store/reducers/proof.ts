@@ -12,7 +12,7 @@ import {
   removeProofToBeMinted,
   setMintTxHash,
   setNewProofActiveStep,
-  setUploadPerc,
+  setUploadPerc, setUserMintedProofs,
   toggleFileVerificationToProofToMint,
   toggleFileVerificationToProofToMint_All,
   toggleUploadingFileToPublish
@@ -78,7 +78,8 @@ export const proofReducerSlice = createSlice({
     toggleUploadingFileToPublish,
     setNewProofActiveStep,
     setMintTxHash,
-    editTitleProofToMint
+    editTitleProofToMint,
+    setUserMintedProofs
   },
   extraReducers:
     (builder) => {
@@ -152,6 +153,7 @@ export const proofReducerActions = {
   setNewProofActiveStep: proofReducerSlice.actions.setNewProofActiveStep,
   setMintTxHash: proofReducerSlice.actions.setMintTxHash,
   editTitleProofToMint: proofReducerSlice.actions.editTitleProofToMint,
+  setUserMintedProofs: proofReducerSlice.actions.setUserMintedProofs,
   loadPrices: loadPrices,
   loadProofs: loadProofs,
   addProofsToBeMinted: addProofsToBeMinted,
