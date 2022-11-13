@@ -257,7 +257,7 @@ export const generateProofs = createAsyncThunk<string, GenerateProofActionParams
         to: params.routerAddress,
         value: params.web3.utils.toWei(totalAmountEth.toString(), 'ether'),
         gas: Math.floor(parseInt(gas) * 1.1),
-        maxPriorityFeePerGas: params.web3.utils.toWei("0.000000040", 'ether')  // TODO use a Gas Station, checking this issue https://github.com/ethers-io/ethers.js/issues/2828
+        maxPriorityFeePerGas: params.web3.utils.toWei("0.000000080", 'ether')  // TODO use a Gas Station, checking this issue https://github.com/ethers-io/ethers.js/issues/2828
       })
         .on('transactionHash', (hash: string) => {
           resolve(hash);
