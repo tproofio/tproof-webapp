@@ -31,8 +31,8 @@ export const useEditProofTitle = (): UseEditProofTitleResponse => {
   const network = useNetwork();
   const userAccount = useAccount();
   const { config, error } = usePrepareContractWrite({
-    address: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ABI,
+    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
     functionName: 'updateTitle',
     onError: (error) => { setStatus({completed: true, transactionHash: "", error: error.message}); },
     onSuccess: (data) => { setStatus({completed: true, transactionHash: "", error: ""})}

@@ -36,8 +36,8 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
   const [status, setStatus] = useState<UseLoadPricesState>({completed: false, error: "", result: undefined});
   const network = useNetwork();
   const contract = useContract({
-    address: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ABI
+    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI
   });
   const provider = useProvider();
   const loadPrices = (): void => {
