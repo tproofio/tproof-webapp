@@ -5,6 +5,11 @@ import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {ethers} from "ethers";
 import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../utils/useBaseSmartContractWrite";
 
+/**
+ * @param {ProofToMint[]} proofs - proofs to be passed
+ * @param {string} delegatorAddress - address of the delegator to verify the hash if file is made public
+ * @param {Prices} price - the prices for this network
+ */
 export type GenerateProofParams = {
   proofs: ProofToMint[],
   delegatorAddress: string,
@@ -18,6 +23,9 @@ export interface UseGenerateProofsResponse extends useBaseSmartContractWriteStat
   generateProofs: (params: GenerateProofParams) => void
 }
 
+/**
+ * Generates the proofs
+ */
 export const useGenerateProofs = (): UseGenerateProofsResponse => {
   const {completed, error, loading, result, txHash, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
     startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
@@ -31,9 +39,11 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
     onSuccess: (data) => { endAsyncActionSuccess(undefined); }
   });
   const contractWrite = useContractWrite(prepareContractWrite.config);
+
   useEffect(() => {
-    startAsyncActionWithTxHash(contractWrite.data.hash);
-  }, [contractWrite.data.hash]);
+    startAsyncActionWithTxHash(contractWrite.data?.hash);
+  }, [contractWrite.data?.hash]);
+
   const generateProofs = (params: GenerateProofParams): void => {
     startAsyncAction();
     new Promise( async (resolve, reject) => {

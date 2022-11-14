@@ -170,32 +170,6 @@ export const addProofsToBeMinted = createAsyncThunk<ProofToMint[], { fileList: F
 
 
 /**
- * Load the current prices to mint on the chain we're connected at
- * @type {AsyncThunk<Token, {web3: Web3, routerAbi: AbiItem, routerAddress: string}>}
- */
-export const loadPrices = createAsyncThunk<Prices, {web3: Web3, routerAbi: AbiItem, routerAddress: string}>(
-  'proof/loadPrices',
-  async (params, thunkAPI) => {
-
-    // let router = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
-
-    // get how many NFTs has a user
-    // let mintPrice = await router.methods.MINT_PRICE().call();
-    // let verifyPice = await router.methods.VERIFICATION_PRICE().call();
-
-    // TODO fake return as we need to edit how web3 is passed
-    // return {
-    //   mint: parseFloat(params.web3.utils.fromWei(mintPrice)),
-    //   verification: parseFloat(params.web3.utils.fromWei(verifyPice))
-    // };
-    return {
-      mint: 3,
-      verification: 10
-    };
-  }
-)
-
-/**
  * Launch the mint transaction with the generation of proofs
  * @type {AsyncThunk<string,GenerateProofActionParams>} - returns the mint tx hash
  */

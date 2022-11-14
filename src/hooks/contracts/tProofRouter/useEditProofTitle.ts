@@ -15,6 +15,9 @@ export interface UseEditProofTitleResponse extends useBaseSmartContractWriteStat
   editProofTitle: (params: EditProofTitleParams) => void
 }
 
+/**
+ * Hook used to edit the title of a proof
+ */
 export const useEditProofTitle = (): UseEditProofTitleResponse => {
   const {completed, error, loading, result, txHash, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
     startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
@@ -27,6 +30,7 @@ export const useEditProofTitle = (): UseEditProofTitleResponse => {
     onError: (error) => { endAsyncActionError(error.message); },
     onSuccess: (data) => { endAsyncActionSuccess(undefined); }
   });
+
   const contractWrite = useContractWrite(prepareContractWrite.config);
   useEffect(() => {
     startAsyncActionWithTxHash(contractWrite.data.hash);
@@ -43,5 +47,6 @@ export const useEditProofTitle = (): UseEditProofTitleResponse => {
       });
     }).then(() => {});
   };
+
   return { completed, error, loading, result, txHash, editProofTitle };
 }

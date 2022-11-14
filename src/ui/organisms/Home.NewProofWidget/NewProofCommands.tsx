@@ -7,6 +7,8 @@ import {useWeb3} from "../../../hooks/useWeb3";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
 import {useUploadFiles} from "../../../hooks/aws/s3/useUploadFiles";
+import {useGenerateProofs} from "../../../hooks/contracts/tProofRouter/useGenerateProofs";
+import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
 
 /**
  *
@@ -18,11 +20,13 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
 
   const dispatch = useAppDispatch();
   const fileListCache = useFileListCache();
-  const web3 = useWeb3();
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
   const useUploadFilesObj = useUploadFiles();
+  const generateProofs = useGenerateProofs();
+  const loadProofs = useLoadProofs();
+
   const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
   const activeStepNum = useAppSelector(state => state.proof.newProofActiveStep);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
@@ -63,6 +67,16 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
     }
   }, [useUploadFilesObj.completed])
 
+  // manages the states of tx minting
+  useEffect(() => {
+    dispatch(proofReducerActions.setMintTxHash(generateProofs.txHash));
+    if (generateProofs.completed) {
+      dispatch(proofReducerActions.setNewProofActiveStep(0));
+      dispatch(proofReducerActions.emptyProofToBeMinted());
+      loadProofs.loadProofs();
+    }
+  }, [generateProofs.completed, generateProofs.loading, generateProofs.txHash])
+
   /**
    * Appends the files selected by the user to the list of files to remember
    * @param e
@@ -86,18 +100,12 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
   /**
    * Starts the mint transaction
    */
-  const generateProofs = () => {
-    dispatch(proofReducerActions.generateProofs({
-      web3: web3,
-      address: connectedWalletAddress,
+  const generateProofsAction = () => {
+    generateProofs.generateProofs({
       proofs: proofToBeMinted,
       delegatorAddress: CONTRACTS_DETAILS[chain?.id].DELEGATOR_ADDRESS,
-      nftAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ABI,
-      nftAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS,
-      routerAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ADDRESS,
-      routerAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ABI,
       price
-    }));
+    });
   }
 
 
@@ -115,7 +123,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
                   {uploadingFileToPublish ? "Uploading Files ..." : "Continue"}
                 </Button>
                 :
-                <Button variant="contained" sx={{mt: 4, width: 200}} onClick={generateProofs} disabled={mintingTx !== ""}>
+                <Button variant="contained" sx={{mt: 4, width: 200}} onClick={generateProofsAction} disabled={mintingTx !== ""}>
                   {
                     mintingTx !== "" ?
                       "Transaction pending ..."
