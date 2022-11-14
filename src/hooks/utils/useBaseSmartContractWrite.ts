@@ -1,13 +1,17 @@
 import {useState} from "react";
-import {useBaseAsyncHook, useBaseAsyncHookReturn} from "./useBaseAsyncHook";
-
+import {useBaseAsyncHook, useBaseAsyncHookReturn, useBaseAsyncHookState} from "./useBaseAsyncHook";
 
 /**
- * @param {string} txHash - hash of the tx, empty if not set
+ @param {string} txHash - hash of the tx, empty if not set
+ */
+export interface useBaseSmartContractWriteState<T> extends useBaseAsyncHookState<T> {
+  txHash: string
+}
+
+/**
  * @param {(_txHash: string) => void} startAsyncActionWithTxHash - starts the async action setting the tx hash
  */
-export interface useBaseSmartContractWriteReturn<T> extends useBaseAsyncHookReturn<T> {
-  txHash: string,
+export interface useBaseSmartContractWriteReturn<T> extends useBaseSmartContractWriteState<T>, useBaseAsyncHookReturn<T> {
   startAsyncActionWithTxHash: (_txHash: string) => void
 }
 

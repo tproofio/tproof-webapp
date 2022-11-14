@@ -1,6 +1,6 @@
-import {useState} from "react";
 import {useContract, useNetwork, useProvider} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useBaseAsyncHook, useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
 import {ethers} from "ethers";
 
 /**
@@ -13,20 +13,9 @@ export interface LoadPricesResult {
 }
 
 /**
- * @param {boolean} completed
- * @param {string} error
- * @param {LoadPricesResult} result
- */
-export interface UseLoadPricesState {
-  completed: boolean,
-  error: string,
-  result: LoadPricesResult | undefined
-}
-
-/**
  * @param {function} loadPrices
  */
-export interface UseLoadPricesResponse extends UseLoadPricesState {
+export interface UseLoadPricesResponse extends useBaseAsyncHookState<LoadPricesResult> {
   loadPrices: () => void
 }
 
@@ -34,7 +23,8 @@ export interface UseLoadPricesResponse extends UseLoadPricesState {
  * Hook used to load mint and verification prices.
  */
 export const useLoadPrices = (): UseLoadPricesResponse => {
-  const [status, setStatus] = useState<UseLoadPricesState>({completed: false, error: "", result: undefined});
+  const {completed, error, loading, result,
+    startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<LoadPricesResult>();
   const network = useNetwork();
   const contract = useContract({
     address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
@@ -43,23 +33,20 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
   const provider = useProvider();
 
   const loadPrices = (): void => {
+    startAsyncAction();
     new Promise( async (resolve, reject) => {
-      let error = ""; let result: LoadPricesResult = undefined;
       try {
         const mintPrice = await contract.connect(provider).MINT_PRICE();
         const verificationPrice = await contract.connect(provider).VERIFICATION_PRICE();
+        endAsyncActionSuccess({mint: mintPrice, verification: verificationPrice});
         result = {
           mint: parseFloat(ethers.utils.formatEther(mintPrice)),
           verification: parseFloat(ethers.utils.formatEther(verificationPrice))
         };
       } catch (e) {
-        error = e.toString();
+        endAsyncActionError(e.toString());
       }
-      setStatus({ completed: true, error, result });
     }).then(() => {});
   };
-
-  return {
-    ...status, loadPrices
-  };
+  return { completed, error, loading, result, loadPrices };
 }

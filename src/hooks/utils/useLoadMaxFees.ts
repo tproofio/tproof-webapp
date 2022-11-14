@@ -1,7 +1,7 @@
 import {ethers} from "ethers";
 import axios from "axios";
-import {useState} from "react";
 import {BigNumber} from "@ethersproject/bignumber";
+import {useBaseAsyncHook, useBaseAsyncHookState} from "./useBaseAsyncHook";
 
 export interface LoadMaxFeesResult {
   maxFeePerGas: BigNumber,
@@ -9,27 +9,18 @@ export interface LoadMaxFeesResult {
 }
 
 /**
- * @param {boolean} completed
- * @param {string} error
- * @param {LoadMaxFeesResult | undefined} result
+ * @param {function} loadMaxFees
  */
-export interface UseLoadMaxFeesState {
-  completed: boolean,
-  error: string,
-  result: LoadMaxFeesResult | undefined
-}
-
-/**
- * @param {function} loadPrices
- */
-export interface UseLoadMaxFeesResponse extends UseLoadMaxFeesState {
+export interface UseLoadMaxFeesResponse extends useBaseAsyncHookState<LoadMaxFeesResult> {
   loadMaxFees: () => void
 }
 
 export const useLoadMaxFees = (): UseLoadMaxFeesResponse => {
-  const [status, setStatus] = useState<UseLoadMaxFeesState>({
-    completed: false, error: "", result: undefined});
+  const {completed, error, loading, result,
+    startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<LoadMaxFeesResult>();
+
   const loadMaxFees = (): void => {
+    startAsyncAction();
     new Promise(async (resolve, reject) => {
       // get max fees from gas station
       let maxFeePerGas = ethers.BigNumber.from(40000000000); // fallback to 40 gwei
@@ -45,11 +36,11 @@ export const useLoadMaxFees = (): UseLoadMaxFeesResponse => {
             Math.ceil(data.fast.maxPriorityFee) + '',
             'gwei'
         );
+        endAsyncActionSuccess({maxFeePerGas, maxPriorityFeePerGas});
       } catch (e) {
-        error = e.toString();
+        endAsyncActionError(e.toString());
       }
-      setStatus({completed: true, error: error, result: {maxFeePerGas, maxPriorityFeePerGas}});
     }).then(() => {});
   };
-  return {...status, loadMaxFees};
+  return { completed, error, loading, result, loadMaxFees };
 }
