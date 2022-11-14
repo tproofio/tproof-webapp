@@ -15,6 +15,7 @@ import {CHAIN_DETAILS} from "../../../utils/constants";
 import {useNetwork} from "wagmi";
 import {useEditProofTitle} from "../../../hooks/contracts/tProofRouter/useEditProofTitle";
 import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useDebounce} from "use-debounce";
 
 /**
  *
@@ -26,7 +27,11 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
 
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
   const { chain } = useNetwork();
-  const editTitle = useEditProofTitle();
+  const debouncedNewTitleTmp = useDebounce(newTitleTmp, 500)[0];
+  const editTitle = useEditProofTitle({
+    nftId: props.nftId,
+    newTitle: debouncedNewTitleTmp
+  });
   const loadProofs = useLoadProofsUI();
 
   const mintingTx = editTitle.txHash;
@@ -45,10 +50,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
 
   const setNewTitle = () => {
     if (newTitleTmp.length > 0) {
-      editTitle.editProofTitle({
-        nftId: props.nftId,
-        newTitle: newTitleTmp
-      })
+      editTitle.editProofTitle()
     }
   }
 

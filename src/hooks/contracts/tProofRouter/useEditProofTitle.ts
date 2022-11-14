@@ -1,5 +1,5 @@
-import {useEffect} from "react";
-import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
+import {useEffect, useMemo, useState} from "react";
+import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../utils/useBaseSmartContractWrite";
 
@@ -16,44 +16,55 @@ export type EditProofTitleParams = {
  * @param {function} editProofTitle
  */
 export interface UseEditProofTitleResponse extends useBaseSmartContractWriteState<undefined> {
-  editProofTitle: (params: EditProofTitleParams) => void
+  editProofTitle: () => void
 }
 
 /**
  * Hook used to edit the title of a proof
  */
-export const useEditProofTitle = (): UseEditProofTitleResponse => {
+export const useEditProofTitle = (params: EditProofTitleParams): UseEditProofTitleResponse => {
   const {completed, error, loading, result, txHash, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
     startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
   const network = useNetwork();
-  const userAccount = useAccount();
+  const [doCall, setDoCall] = useState<boolean>(false);
+
+  const args = useMemo(() => {
+    return [
+      [params.nftId], [params.newTitle]
+    ]
+  }, [params]);
+
   const prepareContractWrite = usePrepareContractWrite({
-    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
+    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ADDRESS,
+    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ABI,
     functionName: 'updateTitle',
-    onError: (error) => { endAsyncActionError(error.message); },
-    onSuccess: (data) => { endAsyncActionSuccess(undefined); },
-    enabled: false
+    args: args,
+    enabled: doCall
   });
 
   const contractWrite = useContractWrite(prepareContractWrite.config);
 
-  useEffect(() => {
-    if (contractWrite.data?.hash)
-      startAsyncActionWithTxHash(contractWrite.data?.hash);
-  }, [contractWrite.data?.hash]);
+  const waitForTx = useWaitForTransaction({
+    hash: contractWrite.data?.hash,
+  });
 
-  const editProofTitle = (params: EditProofTitleParams): void => {
+  useEffect(() => {
+    if (waitForTx.status === "success") endAsyncActionSuccess(undefined)
+    else if (waitForTx.status === "loading") startAsyncActionWithTxHash(contractWrite.data?.hash)
+    else if (waitForTx.status === "error") endAsyncActionError(waitForTx.error.message)
+  }, [waitForTx.status])
+
+
+  useEffect(() => {
+    if (doCall) {
+      contractWrite.write();
+      setDoCall(false);
+    }
+  }, [doCall])
+
+  const editProofTitle = (): void => {
     startAsyncAction();
-    new Promise(async (resolve, reject) => {
-      await contractWrite.writeAsync({
-        recklesslySetUnpreparedArgs: [
-          [params.nftId], [params.newTitle]],
-        recklesslySetUnpreparedOverrides: {
-          from: userAccount.address
-        }
-      });
-    }).then(() => {});
+    setDoCall(true);
   };
 
   return { completed, error, loading, result, txHash, editProofTitle };
