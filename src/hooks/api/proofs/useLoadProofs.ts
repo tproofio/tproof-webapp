@@ -47,7 +47,7 @@ export const useLoadProofs = ():  UseLoadProofsResponse => {
         else verificationStatus = ProofVerificationStatus.NotVerified;
         proofs.push({
           id: r.tokenId,
-          chain: Chain.Goerli,
+          chain: network.chain.id,
           nftNum: nftNum,
           hash: r.rawMetadata.attributes.find(e => e.trait_type === "Hash").value,
           title: r.title,
