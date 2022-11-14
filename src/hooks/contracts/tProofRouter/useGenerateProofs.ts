@@ -36,7 +36,8 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
     functionName: 'createProofs',
     onError: (error) => { endAsyncActionError(error.message); },
-    onSuccess: (data) => { endAsyncActionSuccess(undefined); }
+    onSuccess: (data) => { endAsyncActionSuccess(undefined); },
+    enabled: false
   });
   const contractWrite = useContractWrite(prepareContractWrite.config);
 
@@ -65,7 +66,6 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
         withFileUrl.push(p.toBeVerified);
         storageType.push(0);  // currently we support only ArweaveV1
       }
-
       await contractWrite.writeAsync({
         recklesslySetUnpreparedArgs: [
             hash, title, withFileUrl, storageType, userAccount.address, params.delegatorAddress],
