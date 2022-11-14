@@ -1,34 +1,30 @@
 import {Proof} from "../../../utils/ProjectTypes/Project.types";
-import {useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {OwnedNftsResponse} from "alchemy-sdk";
 import {useAccount, useNetwork} from "wagmi";
 import {fromTokenIdToChain} from "../../../utils/Tools/Web3Management";
 import {Chain, ProofVerificationStatus} from "../../../utils/ProjectTypes/Project.enum";
+import {useBaseAsyncHook, useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
 
-/**
- * @param {boolean} completed
- * @param {string} error
- * @param {Proof[]} result
- */
-export interface UseLoadProofsState {
-  completed: boolean,
-  error: string,
-  result: Proof[] | undefined
-}
 
 /**
  * @param {function} loadPrices
  */
-export interface UseLoadProofsResponse extends UseLoadProofsState {
+export interface UseLoadProofsResponse extends useBaseAsyncHookState<Proof[]> {
   loadProofs: () => void
 }
 
 export const useLoadProofs = ():  UseLoadProofsResponse => {
-  const [status, setStatus] = useState<UseLoadProofsState>({completed: false, error: "", result: undefined});
+  const {completed, error, loading, result,
+    startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<Proof[]>();
   const userAccount = useAccount();
   const network = useNetwork();
+
+  /**
+   * Calls the backend API to load the proofs
+   */
   const loadProofs = (): void => {
+    startAsyncAction();
     new Promise( async (resolve, reject) => {
       // run the GET calling the lambda function
       const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://og6meua7fqc6c7qjxuezxma6uq0wcvjq.lambda-url.eu-west-1.on.aws", {
@@ -67,12 +63,10 @@ export const useLoadProofs = ():  UseLoadProofsResponse => {
 
       // order by most recent to the least recent
       proofs = proofs.sort((a, b) => a.id < b.id ? 1 : -1);
-      setStatus({
-        completed: true,
-        error: "",
-        result: proofs
-      });
+
+      endAsyncActionSuccess(proofs);
     }).then(() => {});
   }
-  return { ...status, loadProofs };
+
+  return { completed, error, loading, result, loadProofs };
 }

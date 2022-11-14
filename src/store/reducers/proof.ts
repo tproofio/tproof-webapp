@@ -12,7 +12,8 @@ import {
   removeProofToBeMinted,
   setMintTxHash,
   setNewProofActiveStep,
-  setUploadPerc, setUserMintedProofs,
+  setUploadPerc,
+  setUserMintedProofs,
   toggleFileVerificationToProofToMint,
   toggleFileVerificationToProofToMint_All,
   toggleUploadingFileToPublish
