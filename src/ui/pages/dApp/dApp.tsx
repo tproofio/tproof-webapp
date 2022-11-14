@@ -37,8 +37,9 @@ const DApp: React.FC<IDApp> = (props) => {
   }, [loadPrices.completed]);
 
   useEffect(() => {
+    console.log(connectedWalletAddress, chain?.id);
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
-      loadProofs();
+      loadProofs.loadProofs();
       loadPrices.loadPrices();
     } else if (!connectedWalletAddress) {
       // wallet not connected, send back to homepage

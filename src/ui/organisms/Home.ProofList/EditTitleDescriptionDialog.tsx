@@ -39,7 +39,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
   useEffect(() => {
     if (editTitle.completed) {
       props.handleClose();
-      loadProofs();
+      loadProofs.loadProofs();
     }
   }, [editTitle.completed]);
 

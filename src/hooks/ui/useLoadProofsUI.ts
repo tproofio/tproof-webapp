@@ -7,20 +7,27 @@ import {useAppDispatch} from "../redux/reduxHooks";
 /**
  * Calls the load proofs and manages the state changes in the redux store
  */
-export const useLoadProofsUI = (): (() => void) => {
+export const useLoadProofsUI = (): {loadProofs: () => void} => {
 
   const dispatch = useAppDispatch();
   const loadProofsObj = useLoadProofs();
 
+  console.log("loadProofsObj", loadProofsObj);
+
   useEffect(() => {
+    console.log("loadProofsObj.completed", loadProofsObj.completed);
     if (loadProofsObj.completed)
       dispatch(proofReducerActions.setUserMintedProofs(loadProofsObj.result));
     dispatch(proofReducerActions.setMintedProofLoading(loadProofsObj.loading));
-  }, [loadProofsObj.completed, loadProofsObj.loading])
+  }, [loadProofsObj.completed, loadProofsObj.loading, loadProofsObj.result])
 
+  const loadProofs = () => {
+    if (!loadProofsObj.loading)
+      loadProofsObj.loadProofs();
+  }
 
-  return () => {
-    loadProofsObj.loadProofs();
-  };
+  return {
+    loadProofs
+  }
 
 }
