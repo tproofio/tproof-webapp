@@ -15,6 +15,7 @@ export interface UseLoadProofsResponse extends useBaseAsyncHookState<Proof[]> {
 }
 
 export const useLoadProofs = ():  UseLoadProofsResponse => {
+
   const {completed, error, loading, result,
     startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<Proof[]>();
   const userAccount = useAccount();

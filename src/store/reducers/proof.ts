@@ -8,8 +8,7 @@ import {
   emptyProofToBeMinted,
   generateProofs,
   loadPrices,
-  loadProofs,
-  removeProofToBeMinted,
+  removeProofToBeMinted, setMintedProofLoading,
   setMintTxHash,
   setNewProofActiveStep,
   setUploadPerc,
@@ -38,7 +37,7 @@ import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types
  */
 export interface ProofReducer extends BaseReducer {
   mintedProofs: Proof[],
-  mintedProofsLoading: boolean,  // remove
+  mintedProofsLoading: boolean,
   proofToBeMinted: ProofToMint[],
   proofsToBeMintedHasEvaluationPending: boolean,  // remove
   uploadingFileToPublish: boolean,  // remove
@@ -80,7 +79,8 @@ export const proofReducerSlice = createSlice({
     setNewProofActiveStep,
     setMintTxHash,
     editTitleProofToMint,
-    setUserMintedProofs
+    setUserMintedProofs,
+    setMintedProofLoading
   },
   extraReducers:
     (builder) => {
@@ -91,20 +91,6 @@ export const proofReducerSlice = createSlice({
       })
       builder.addCase(loadPrices.rejected, (state, action) => {
         state.dispatchError = { code: ErrorsEnum.PROOF_0005, message: "", action: "proof/loadPrices"};
-      })
-
-      /** Load all Proofs of a user */
-      builder.addCase(loadProofs.fulfilled, (state, action) => {
-        state.mintedProofs = action.payload;
-        state.mintedProofsLoading = false;
-      })
-      builder.addCase(loadProofs.pending, (state, action) => {
-        // do nothing, maybe we can add a looper
-        state.mintedProofsLoading = true;
-      })
-      builder.addCase(loadProofs.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0001, message: action.payload as string, action: "proof/loadProofs"};
-        state.mintedProofsLoading = false;
       })
 
       /** Add proofs to be minted */
@@ -155,8 +141,8 @@ export const proofReducerActions = {
   setMintTxHash: proofReducerSlice.actions.setMintTxHash,
   editTitleProofToMint: proofReducerSlice.actions.editTitleProofToMint,
   setUserMintedProofs: proofReducerSlice.actions.setUserMintedProofs,
+  setMintedProofLoading: proofReducerSlice.actions.setMintedProofLoading,
   loadPrices: loadPrices,
-  loadProofs: loadProofs,
   addProofsToBeMinted: addProofsToBeMinted,
   generateProofs: generateProofs,
   editTile: editTile

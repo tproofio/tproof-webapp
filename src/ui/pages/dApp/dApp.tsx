@@ -35,7 +35,8 @@ const DApp: React.FC<IDApp> = (props) => {
   useEffect(() => {
     if (loadProofs.completed)
       dispatch(proofReducerActions.setUserMintedProofs(loadProofs.result));
-  }, [loadProofs.completed])  // TODO insert the check also in the loop to dispatch the set of the loop state in the redux store. Organize maybe etter the redux store, for both data and data-loading state
+    dispatch(proofReducerActions.setUserMintedProofs(loadProofs.result));
+  }, [loadProofs.completed, loadProofs.loading])  // TODO insert the check also in the loop to dispatch the set of the loop state in the redux store. Organize maybe etter the redux store, for both data and data-loading state
 
   useEffect(() => {
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {

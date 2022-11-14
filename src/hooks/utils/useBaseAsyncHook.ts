@@ -14,9 +14,9 @@ export interface useBaseAsyncHookState<T> {
 }
 
 /**
- * @param {() => useBaseAsyncHookState<T>} startAsyncAction - starts the async action
- * @param {(_result: T) => useBaseAsyncHookState<T>} endAsyncActionSuccess - ends the async action with success
- * @param {(_error: string) => useBaseAsyncHookState<T>} endAsyncActionError - ends the async action with error, setting the error
+ * @param {() => void} startAsyncAction - starts the async action
+ * @param {(_result: T) => void} endAsyncActionSuccess - ends the async action with success
+ * @param {(_error: string) => void} endAsyncActionError - ends the async action with error, setting the error
  */
 export interface useBaseAsyncHookReturn<T> extends useBaseAsyncHookState<T> {
   startAsyncAction: () => void,

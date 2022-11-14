@@ -125,6 +125,17 @@ export const editTitleProofToMint: CaseReducer<ProofReducer, PayloadAction<{ pos
 }
 
 /**
+ * Sets true if minted proofs are loading, false otherwise
+ * @param {Draft<ProofReducer>} state
+ * @param {PayloadAction<boolean>} action
+ */
+export const setMintedProofLoading: CaseReducer<ProofReducer, PayloadAction<boolean>> =
+  (state, action) => {
+    state.mintedProofsLoading = action.payload;
+}
+
+
+/**
  * Add more files in the list of proofs to be minted
  * @type {AsyncThunk<ProofToMint[], { fileList: FileList, ids: string[] }>} - the list of ids to pass should match the files passed to be added, with their IDs
  */
@@ -147,57 +158,6 @@ export const addProofsToBeMinted = createAsyncThunk<ProofToMint[], { fileList: F
     return filesToBeMinted;
   });
 
-/**
- * Load all the NFTs minted by a user
- * @type {AsyncThunk<Token, {address: address, web3: Web3}>}
- */
-export const loadProofs = createAsyncThunk<Proof[], {address: address, network: Chain}>(
-  'proof/loadProofs',
-  async (params, thunkAPI) => {
-
-    // run the GET calling the lambda function
-    const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://og6meua7fqc6c7qjxuezxma6uq0wcvjq.lambda-url.eu-west-1.on.aws", {
-      params: {
-        owner: params.address,
-        network: params.network
-      }
-    })
-
-    let proofs: Proof[] = [];
-
-    // iterate on the response and generate the reply
-    for (let r of alchemyResp.data.ownedNfts) {
-      let {chain, nftNum} = fromTokenIdToChain(r.tokenId);
-      let createdAt = r.rawMetadata.attributes.find(e => e.trait_type === "Created At");
-      let verifiedStr = r.rawMetadata.attributes.find(e => e.trait_type === "Verified").value;
-      let verificationFailedString = r.rawMetadata.attributes.find(e => e.trait_type === "Verification Failed").value;
-      let verificationStatus: ProofVerificationStatus;
-      if (verifiedStr === "True") verificationStatus = ProofVerificationStatus.Verified;
-      else if (verifiedStr === "Pending") verificationStatus = ProofVerificationStatus.Pending;
-      else if (verificationFailedString === "true") verificationStatus = ProofVerificationStatus.Failed;
-      else verificationStatus = ProofVerificationStatus.NotVerified;
-      proofs.push({
-        id: r.tokenId,
-        chain: Chain.Goerli,
-        nftNum: nftNum,
-        hash: r.rawMetadata.attributes.find(e => e.trait_type === "Hash").value,
-        title: r.title,
-        createdAt: parseInt(createdAt.value),
-        description: r.description,
-        verificationStatus: verificationStatus,
-        MIMEType: r.rawMetadata.attributes.find(e => e.trait_type === "MIME Type").value,
-        fileUrl: r.rawMetadata.external_url,
-        storageType: r.rawMetadata.attributes.find(e => e.trait_type === "Storage Type").value,
-        verificationFailed: verificationFailedString === "true"
-      })
-    }
-
-    // order by most recent to the least recent
-    proofs = proofs.sort((a, b) => a.id < b.id ? 1 : -1);
-
-    return proofs;
-  }
-)
 
 /**
  * Load the current prices to mint on the chain we're connected at
@@ -274,7 +234,7 @@ export const generateProofs = createAsyncThunk<string, GenerateProofActionParams
         .on('receipt', function(receipt: string){
           thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
           thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(0));
-          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: 555 }));  // TODO insert the correct ChainId reading from the hook (do that before getting here, as if the user changes the chain after tx sends, this might generate strange behaviour)
+          // thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: 555 }));  // TODO insert the correct ChainId reading from the hook (do that before getting here, as if the user changes the chain after tx sends, this might generate strange behaviour)
           thunkAPI.dispatch(proofReducerActions.emptyProofToBeMinted());
         })
         .on('error', (e: any) => {
@@ -313,7 +273,7 @@ export const editTile = createAsyncThunk<string, { address: address, web3: Web3,
         })
         .on('receipt', function(receipt: string){
           thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
-          thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: params.chainId}));
+          // thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: params.chainId}));
         })
         .on('error', (e: any) => {
           reject(e)
