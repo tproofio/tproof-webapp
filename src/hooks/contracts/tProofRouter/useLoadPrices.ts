@@ -38,11 +38,10 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
       try {
         const mintPrice = await contract.connect(provider).MINT_PRICE();
         const verificationPrice = await contract.connect(provider).VERIFICATION_PRICE();
-        endAsyncActionSuccess({mint: mintPrice, verification: verificationPrice});
-        result = {
+        endAsyncActionSuccess({
           mint: parseFloat(ethers.utils.formatEther(mintPrice)),
           verification: parseFloat(ethers.utils.formatEther(verificationPrice))
-        };
+        });
       } catch (e) {
         endAsyncActionError(e.toString());
       }
