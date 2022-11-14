@@ -1,8 +1,10 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {Prices, ProofToMint} from "../../../utils/ProjectTypes/Project.types";
 import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {ethers} from "ethers";
+import {useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
+import {useBaseSmartContractWrite} from "../../utils/useBaseSmartContractWrite";
 
 export type GenerateProofParams = {
   proofs: ProofToMint[],
@@ -11,40 +13,31 @@ export type GenerateProofParams = {
 }
 
 /**
- * @param {boolean} completed
- * @param {string} error
- * @param {LoadPricesResult} result
- */
-export interface UseGenerateProofsState {
-  completed: boolean,
-  error: string,
-  transactionHash: string
-}
-
-/**
  * @param {function} loadPrices
  */
-export interface UseGenerateProofsResponse extends UseGenerateProofsState {
+export interface UseGenerateProofsResponse extends useBaseAsyncHookState<undefined> {
   generateProofs: (params: GenerateProofParams) => void
 }
 
 export const useGenerateProofs = (): UseGenerateProofsResponse => {
-  const [status, setStatus] = useState<UseGenerateProofsState>({
-    completed: false, error: "", transactionHash: ""});
+  const {completed, error, loading, result, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
+    startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
+
   const network = useNetwork();
   const userAccount = useAccount();
-  const { config, error } = usePrepareContractWrite({
+  const prepareContractWrite = usePrepareContractWrite({
     address: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ABI,
     functionName: 'generateProofs',
-    onError: (error) => { setStatus({completed: true, transactionHash: "", error: error.message}); },
-    onSuccess: (data) => { setStatus({completed: true, transactionHash: "", error: ""})}
+    onError: (error) => { endAsyncActionError(error.message); },
+    onSuccess: (data) => { endAsyncActionSuccess(undefined); }
   });
-  const contractWrite = useContractWrite(config);
+  const contractWrite = useContractWrite(prepareContractWrite.config);
   useEffect(() => {
-    setStatus({...status, transactionHash: contractWrite.data.hash});
+    startAsyncActionWithTxHash(contractWrite.data.hash);
   }, [contractWrite.data.hash]);
   const generateProofs = (params: GenerateProofParams): void => {
+    startAsyncAction();
     new Promise( async (resolve, reject) => {
       let totalAmountEth = (
               params.proofs.map((proof): number => proof.toBeVerified ? 1 : 0)
@@ -74,7 +67,5 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
       });
     }).then(() => {});
   };
-  return {
-    ...status, generateProofs
-  };
+  return { completed, error, loading, result, generateProofs};
 }
