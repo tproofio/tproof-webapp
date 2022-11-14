@@ -15,6 +15,7 @@ import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
 import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
 import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useLoadPrices} from "../../../hooks/contracts/tProofRouter/useLoadPrices";
 
 /**
  *
@@ -25,25 +26,23 @@ import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
 const DApp: React.FC<IDApp> = (props) => {
 
   const dispatch = useAppDispatch();
-  const web3 = useWeb3();
   const navigate = useNavigate();
   const loadProofs = useLoadProofsUI();
+  const loadPrices = useLoadPrices();
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
+    if (loadPrices.completed)
+      dispatch(proofReducerActions.setMintPrices(loadPrices.result));
+  }, [loadPrices.completed]);
+
+  useEffect(() => {
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
-
       loadProofs();
-
-      dispatch(proofReducerActions.loadPrices({
-        web3: web3,
-        routerAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ABI,
-        routerAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_ROUTER_ADDRESS
-      }))
-
+      loadPrices.loadPrices();
     } else if (!connectedWalletAddress) {
       // wallet not connected, send back to homepage
       navigate(RouteKey.Home);

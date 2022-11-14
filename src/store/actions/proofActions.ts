@@ -112,6 +112,16 @@ export const setUserMintedProofs: CaseReducer<ProofReducer, PayloadAction<Proof[
 }
 
 /**
+ * Sets the prices loaded from SC
+ * @param {Draft<ProofReducer>} state
+ * @param {PayloadAction<Prices>} action - prices for the current chain
+ */
+export const setMintPrices: CaseReducer<ProofReducer, PayloadAction<Prices>> =
+  (state, action) => {
+    state.price = action.payload;
+}
+
+/**
  * Sets the title to a new proof
  * @param {Draft<ProofReducer>} state
  * @param {PayloadAction<string>} action

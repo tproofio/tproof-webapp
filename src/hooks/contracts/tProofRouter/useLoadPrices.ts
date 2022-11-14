@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {useContract, useNetwork, useProvider} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
+import {ethers} from "ethers";
 
 /**
  * @param {number} mint
@@ -36,23 +37,28 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
   const [status, setStatus] = useState<UseLoadPricesState>({completed: false, error: "", result: undefined});
   const network = useNetwork();
   const contract = useContract({
-    address: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ABI
+    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI
   });
   const provider = useProvider();
+
   const loadPrices = (): void => {
     new Promise( async (resolve, reject) => {
       let error = ""; let result: LoadPricesResult = undefined;
       try {
         const mintPrice = await contract.connect(provider).MINT_PRICE();
         const verificationPrice = await contract.connect(provider).VERIFICATION_PRICE();
-        result = {mint: mintPrice, verification: verificationPrice};
+        result = {
+          mint: parseFloat(ethers.utils.formatEther(mintPrice)),
+          verification: parseFloat(ethers.utils.formatEther(verificationPrice))
+        };
       } catch (e) {
         error = e.toString();
       }
       setStatus({ completed: true, error, result });
     }).then(() => {});
   };
+
   return {
     ...status, loadPrices
   };

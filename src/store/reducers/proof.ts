@@ -7,8 +7,7 @@ import {
   editTitleProofToMint,
   emptyProofToBeMinted,
   generateProofs,
-  loadPrices,
-  removeProofToBeMinted, setMintedProofLoading,
+  removeProofToBeMinted, setMintedProofLoading, setMintPrices,
   setMintTxHash,
   setNewProofActiveStep,
   setUploadPerc,
@@ -80,18 +79,11 @@ export const proofReducerSlice = createSlice({
     setMintTxHash,
     editTitleProofToMint,
     setUserMintedProofs,
-    setMintedProofLoading
+    setMintedProofLoading,
+    setMintPrices
   },
   extraReducers:
     (builder) => {
-
-      /** Load prices of the service */
-      builder.addCase(loadPrices.fulfilled, (state, action) => {
-        state.price = action.payload;
-      })
-      builder.addCase(loadPrices.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0005, message: "", action: "proof/loadPrices"};
-      })
 
       /** Add proofs to be minted */
       builder.addCase(addProofsToBeMinted.fulfilled, (state, action) => {
@@ -142,7 +134,7 @@ export const proofReducerActions = {
   editTitleProofToMint: proofReducerSlice.actions.editTitleProofToMint,
   setUserMintedProofs: proofReducerSlice.actions.setUserMintedProofs,
   setMintedProofLoading: proofReducerSlice.actions.setMintedProofLoading,
-  loadPrices: loadPrices,
+  setMintPrices: proofReducerSlice.actions.setMintPrices,
   addProofsToBeMinted: addProofsToBeMinted,
   generateProofs: generateProofs,
   editTile: editTile
