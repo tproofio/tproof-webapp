@@ -68,7 +68,6 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
 
   // manages the states of tx minting
   useEffect(() => {
-    console.log ("generateProofs", generateProofs);
     if (generateProofs.loading)
       dispatch(proofReducerActions.setMintTxHash(generateProofs.txHash));
     else if (generateProofs.completed) {

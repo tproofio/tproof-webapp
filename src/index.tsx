@@ -42,7 +42,7 @@ const client = createClient(
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <WagmiConfig client={client}>
         <ConnectKitProvider>
@@ -55,7 +55,7 @@ root.render(
         </ConnectKitProvider>
       </WagmiConfig>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 

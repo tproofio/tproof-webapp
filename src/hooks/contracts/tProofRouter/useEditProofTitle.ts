@@ -32,12 +32,15 @@ export const useEditProofTitle = (): UseEditProofTitleResponse => {
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
     functionName: 'updateTitle',
     onError: (error) => { endAsyncActionError(error.message); },
-    onSuccess: (data) => { endAsyncActionSuccess(undefined); }
+    onSuccess: (data) => { endAsyncActionSuccess(undefined); },
+    enabled: false
   });
 
   const contractWrite = useContractWrite(prepareContractWrite.config);
+
   useEffect(() => {
-    startAsyncActionWithTxHash(contractWrite.data?.hash);
+    if (contractWrite.data?.hash)
+      startAsyncActionWithTxHash(contractWrite.data?.hash);
   }, [contractWrite.data?.hash]);
 
   const editProofTitle = (params: EditProofTitleParams): void => {

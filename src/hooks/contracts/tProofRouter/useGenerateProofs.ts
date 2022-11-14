@@ -42,7 +42,8 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
   const contractWrite = useContractWrite(prepareContractWrite.config);
 
   useEffect(() => {
-    startAsyncActionWithTxHash(contractWrite.data?.hash);
+    if (contractWrite.data?.hash)
+      startAsyncActionWithTxHash(contractWrite.data?.hash);
   }, [contractWrite.data?.hash]);
 
   const generateProofs = (params: GenerateProofParams): void => {

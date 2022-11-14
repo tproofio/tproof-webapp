@@ -12,10 +12,7 @@ export const useLoadProofsUI = (): {loadProofs: () => void} => {
   const dispatch = useAppDispatch();
   const loadProofsObj = useLoadProofs();
 
-  console.log("loadProofsObj", loadProofsObj);
-
   useEffect(() => {
-    console.log("loadProofsObj.completed", loadProofsObj.completed);
     if (loadProofsObj.completed)
       dispatch(proofReducerActions.setUserMintedProofs(loadProofsObj.result));
     dispatch(proofReducerActions.setMintedProofLoading(loadProofsObj.loading));

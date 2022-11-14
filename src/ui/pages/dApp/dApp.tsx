@@ -37,7 +37,6 @@ const DApp: React.FC<IDApp> = (props) => {
   }, [loadPrices.completed]);
 
   useEffect(() => {
-    console.log(connectedWalletAddress, chain?.id);
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
       loadProofs.loadProofs();
       loadPrices.loadPrices();
