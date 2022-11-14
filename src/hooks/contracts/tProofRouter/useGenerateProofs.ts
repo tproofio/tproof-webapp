@@ -3,8 +3,7 @@ import {Prices, ProofToMint} from "../../../utils/ProjectTypes/Project.types";
 import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {ethers} from "ethers";
-import {useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
-import {useBaseSmartContractWrite} from "../../utils/useBaseSmartContractWrite";
+import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../utils/useBaseSmartContractWrite";
 
 export type GenerateProofParams = {
   proofs: ProofToMint[],
@@ -13,21 +12,20 @@ export type GenerateProofParams = {
 }
 
 /**
- * @param {function} loadPrices
+ * @param {function} generateProofs
  */
-export interface UseGenerateProofsResponse extends useBaseAsyncHookState<undefined> {
+export interface UseGenerateProofsResponse extends useBaseSmartContractWriteState<undefined> {
   generateProofs: (params: GenerateProofParams) => void
 }
 
 export const useGenerateProofs = (): UseGenerateProofsResponse => {
-  const {completed, error, loading, result, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
+  const {completed, error, loading, result, txHash, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
     startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
-
   const network = useNetwork();
   const userAccount = useAccount();
   const prepareContractWrite = usePrepareContractWrite({
-    address: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain.id].TPROOF_ROUTER_ABI,
+    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
     functionName: 'generateProofs',
     onError: (error) => { endAsyncActionError(error.message); },
     onSuccess: (data) => { endAsyncActionSuccess(undefined); }
@@ -67,5 +65,5 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
       });
     }).then(() => {});
   };
-  return { completed, error, loading, result, generateProofs};
+  return { completed, error, loading, result, txHash, generateProofs};
 }
