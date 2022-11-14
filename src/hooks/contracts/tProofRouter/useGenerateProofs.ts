@@ -34,7 +34,7 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
   const prepareContractWrite = usePrepareContractWrite({
     address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
-    functionName: 'generateProofs',
+    functionName: 'createProofs',
     onError: (error) => { endAsyncActionError(error.message); },
     onSuccess: (data) => { endAsyncActionSuccess(undefined); }
   });
