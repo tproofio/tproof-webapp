@@ -14,6 +14,7 @@ import {RouteKey} from "../../../App.Routes";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
 import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
+import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
 
 /**
  *
@@ -26,22 +27,16 @@ const DApp: React.FC<IDApp> = (props) => {
   const dispatch = useAppDispatch();
   const web3 = useWeb3();
   const navigate = useNavigate();
-  const loadProofs = useLoadProofs();
+  const loadProofs = useLoadProofsUI();
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (loadProofs.completed)
-      dispatch(proofReducerActions.setUserMintedProofs(loadProofs.result));
-    dispatch(proofReducerActions.setUserMintedProofs(loadProofs.result));
-  }, [loadProofs.completed, loadProofs.loading])  // TODO insert the check also in the loop to dispatch the set of the loop state in the redux store. Organize maybe etter the redux store, for both data and data-loading state
-
-  useEffect(() => {
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
 
-      loadProofs.loadProofs();
+      loadProofs();
 
       dispatch(proofReducerActions.loadPrices({
         web3: web3,

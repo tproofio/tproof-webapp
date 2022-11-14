@@ -12,7 +12,7 @@ export interface useBaseSmartContractWriteReturn<T> extends useBaseAsyncHookRetu
 }
 
 /**
- * Extension of useBaseAsyncHook, studied to implement actions on the blockchain (with tx hash)
+ * Extension of useBaseAsyncHook, studied to implement write actions on the blockchain (with tx hash)
  */
 export const useBaseSmartContractWrite = <T>(): useBaseSmartContractWriteReturn<T> => {
   const [txHash, setTxHash] = useState<string>("");
