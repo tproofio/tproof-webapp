@@ -11,11 +11,10 @@ import {
   Typography
 } from "@mui/material";
 import {theme} from "../../../GlobalStyles";
-import {useAppDispatch, useAppSelector} from "../../../hooks/redux/reduxHooks";
-import {proofReducerActions} from "../../../store/reducers/proof";
-import {useWeb3} from "../../../hooks/useWeb3";
-import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
-import {useAccount, useNetwork} from "wagmi";
+import {CHAIN_DETAILS} from "../../../utils/constants";
+import {useNetwork} from "wagmi";
+import {useEditProofTitle} from "../../../hooks/contracts/tProofRouter/useEditProofTitle";
+import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
 
 /**
  *
@@ -25,40 +24,31 @@ import {useAccount, useNetwork} from "wagmi";
  */
 const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props) => {
 
-  const dispatch = useAppDispatch();
-  const web3 = useWeb3();
-
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
-  const [nextChangeMintTxCloseModal, setNextChangeMintTxCloseModal] = useState<boolean>(false);
-
-  const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
-  const mintingTx = useAppSelector(state => state.proof.mintingTx);
+  const editTitle = useEditProofTitle();
+  const loadProofs = useLoadProofsUI();
+
+  const mintingTx = editTitle.txHash;
 
   useEffect(() => {
     setNewTitleTmp("");
   }, []);
 
-  // TODO Improve the logic of managing multiple txs in parallel - when listening to events that is solved
-  // lsiten when mint tx is over and closes the modal
+  // listen when mint tx is over and closes the modal
   useEffect(() => {
-    if (mintingTx !== "")
-      setNextChangeMintTxCloseModal(true);
-    if (mintingTx === "" && nextChangeMintTxCloseModal)
+    if (editTitle.completed) {
       props.handleClose();
-  }, [mintingTx]);
+      loadProofs();
+    }
+  }, [editTitle.completed]);
 
   const setNewTitle = () => {
     if (newTitleTmp.length > 0) {
-      dispatch(proofReducerActions.editTile({
-        web3: web3,
-        address: connectedWalletAddress,
-        newTitle: newTitleTmp,
+      editTitle.editProofTitle({
         nftId: props.nftId,
-        nftAddress: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS,
-        nftAbi: CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ABI,
-        chainId: chain?.id
-      }));
+        newTitle: newTitleTmp
+      })
     }
   }
 

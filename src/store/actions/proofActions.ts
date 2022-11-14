@@ -1,13 +1,10 @@
 import {CaseReducer, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
-import {address, GenerateProofActionParams, Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
+import {address, Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
 import Web3 from "web3";
 import {ProofReducer, proofReducerActions} from "../reducers/proof";
 import {AbiItem} from 'web3-utils';
-import {Chain, ProofVerificationStatus} from "../../utils/ProjectTypes/Project.enum";
+import {Chain} from "../../utils/ProjectTypes/Project.enum";
 import {fileToHash} from "../../utils/Tools/FileManagement";
-import {OwnedNftsResponse} from "alchemy-sdk";
-import {fromTokenIdToChain} from "../../utils/Tools/Web3Management";
-import axios, {AxiosResponse} from "axios";
 
 
 /** -- ACTIONS */
@@ -144,7 +141,6 @@ export const setMintedProofLoading: CaseReducer<ProofReducer, PayloadAction<bool
     state.mintedProofsLoading = action.payload;
 }
 
-
 /**
  * Add more files in the list of proofs to be minted
  * @type {AsyncThunk<ProofToMint[], { fileList: FileList, ids: string[] }>} - the list of ids to pass should match the files passed to be added, with their IDs
@@ -168,103 +164,4 @@ export const addProofsToBeMinted = createAsyncThunk<ProofToMint[], { fileList: F
     return filesToBeMinted;
   });
 
-
-/**
- * Launch the mint transaction with the generation of proofs
- * @type {AsyncThunk<string,GenerateProofActionParams>} - returns the mint tx hash
- */
-export const generateProofs = createAsyncThunk<string, GenerateProofActionParams>(
-  'proof/generateProofs',
-  async (params, thunkAPI) => {
-
-    return await (new Promise<string>(async (resolve, reject)  => {
-
-      let totalAmountEth = (
-            params.proofs.map((proof): number => proof.toBeVerified ? 1 : 0)
-            .reduce((a, b) => a+b)
-      ) * params.price.verification
-        + (params.proofs.length * params.price.mint);
-
-      let contract = new params.web3.eth.Contract(params.routerAbi, params.routerAddress);
-
-      let hash: string[] = [];
-      let title: string[] = [];
-      let withFileUrl: boolean[] = [];
-      let storageType: number[] = [];
-
-      //eval the params
-      for (let p of params.proofs) {
-        hash.push("0x" + p.hash);
-        title.push(p.title);
-        withFileUrl.push(p.toBeVerified);
-        storageType.push(0);  // currently we support only ArweaveV1
-      }
-
-      let gas = await contract.methods.createProofs(hash, title, withFileUrl, storageType, params.address, params.delegatorAddress).estimateGas({
-        value: params.web3.utils.toWei(totalAmountEth.toString(), 'ether'),
-        from: params.address
-      });
-
-      contract.methods.createProofs(hash, title, withFileUrl, storageType, params.address, params.delegatorAddress).send({
-        from: params.address,
-        to: params.routerAddress,
-        value: params.web3.utils.toWei(totalAmountEth.toString(), 'ether'),
-        gas: Math.floor(parseInt(gas) * 1.1),
-        maxPriorityFeePerGas: params.web3.utils.toWei("0.000000080", 'ether')  // TODO use a Gas Station, checking this issue https://github.com/ethers-io/ethers.js/issues/2828
-      })
-        .on('transactionHash', (hash: string) => {
-          resolve(hash);
-        })
-        .on('receipt', function(receipt: string){
-          thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
-          thunkAPI.dispatch(proofReducerActions.setNewProofActiveStep(0));
-          // thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: 555 }));  // TODO insert the correct ChainId reading from the hook (do that before getting here, as if the user changes the chain after tx sends, this might generate strange behaviour)
-          thunkAPI.dispatch(proofReducerActions.emptyProofToBeMinted());
-        })
-        .on('error', (e: any) => {
-          reject(e)
-        });
-    }));
-
-  }
-)
-
-/**
- * Launch the tx to edit the title of a given NFT
- * @type {AsyncThunk<string,{ address: address, web3: Web3, nftId: number, newTitle: string, nftAbi: AbiItem, nftAddress: address}>} - returns the mint tx hash
- */
-export const editTile = createAsyncThunk<string, { address: address, web3: Web3, nftId: string, newTitle: string, nftAbi: AbiItem, nftAddress: address, chainId: Chain}>(
-  'proof/editTile',
-  async (params, thunkAPI) => {
-
-    return await (new Promise<string>(async (resolve, reject)  => {
-
-      let contract = new params.web3.eth.Contract(params.nftAbi, params.nftAddress);
-
-      let gas = await contract.methods.updateTitle([params.nftId], [params.newTitle]).estimateGas({
-        value: 0,
-        from: params.address,
-      });
-
-      contract.methods.updateTitle([params.nftId], [params.newTitle]).send({
-        from: params.address,
-        to: params.nftAddress,
-        value: 0,
-        gas: Math.floor(parseInt(gas) * 1.1)
-      })
-        .on('transactionHash', (hash: string) => {
-          resolve(hash);
-        })
-        .on('receipt', function(receipt: string){
-          thunkAPI.dispatch(proofReducerActions.setMintTxHash(""));
-          // thunkAPI.dispatch(proofReducerActions.loadProofs({address: params.address, network: params.chainId}));
-        })
-        .on('error', (e: any) => {
-          reject(e)
-        });
-    }));
-
-  }
-
-)
 

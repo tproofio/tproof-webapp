@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
-import {useWeb3} from "../../../hooks/useWeb3";
 import {Box, Grid, Typography, useMediaQuery} from "@mui/material";
 import {theme} from "../../../GlobalStyles";
 import {isSupportedChainId} from "../../../utils/Tools/Web3Management";
@@ -11,9 +10,7 @@ import HomeNewProofWidget from "../../organisms/Home.NewProofWidget/Home.NewProo
 import UnsupportedChainErrorMessage from "../Home/UnsupportedChainErrorMessage";
 import {useNavigate} from "react-router-dom";
 import {RouteKey} from "../../../App.Routes";
-import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
-import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
 import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
 import {useLoadPrices} from "../../../hooks/contracts/tProofRouter/useLoadPrices";
 

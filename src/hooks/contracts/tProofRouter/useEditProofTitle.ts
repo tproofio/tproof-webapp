@@ -1,8 +1,12 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../utils/useBaseSmartContractWrite";
 
+/**
+ * @param {string} nftId
+ * @param {string} newTitle
+ */
 export type EditProofTitleParams = {
   nftId: string,
   newTitle: string
@@ -33,8 +37,9 @@ export const useEditProofTitle = (): UseEditProofTitleResponse => {
 
   const contractWrite = useContractWrite(prepareContractWrite.config);
   useEffect(() => {
-    startAsyncActionWithTxHash(contractWrite.data.hash);
-  }, [contractWrite.data.hash]);
+    startAsyncActionWithTxHash(contractWrite.data?.hash);
+  }, [contractWrite.data?.hash]);
+
   const editProofTitle = (params: EditProofTitleParams): void => {
     startAsyncAction();
     new Promise(async (resolve, reject) => {

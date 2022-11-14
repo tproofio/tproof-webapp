@@ -3,7 +3,6 @@ import {Box, Button, Typography} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux/reduxHooks";
 import {proofReducerActions} from "../../../store/reducers/proof";
 import {useFileListCache} from "../../../hooks/utils/fileListHook";
-import {useWeb3} from "../../../hooks/useWeb3";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
 import {useUploadFiles} from "../../../hooks/aws/s3/useUploadFiles";

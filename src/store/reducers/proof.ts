@@ -3,11 +3,11 @@ import {createSlice} from "@reduxjs/toolkit";
 import {clearError} from "../actions/basicActions";
 import {
   addProofsToBeMinted,
-  editTile,
   editTitleProofToMint,
   emptyProofToBeMinted,
-  generateProofs,
-  removeProofToBeMinted, setMintedProofLoading, setMintPrices,
+  removeProofToBeMinted,
+  setMintedProofLoading,
+  setMintPrices,
   setMintTxHash,
   setNewProofActiveStep,
   setUploadPerc,
@@ -100,24 +100,6 @@ export const proofReducerSlice = createSlice({
         state.proofsToBeMintedHasEvaluationPending = false;
       })
 
-      /** Mint Tx */
-      builder.addCase(generateProofs.fulfilled, (state, action) => {
-        state.mintingTx = action.payload;
-      })
-      builder.addCase(generateProofs.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0004, message: "", action: "proof/generateProofs"};
-        state.mintingTx = "";
-      })
-
-      /** Edit Title */
-      builder.addCase(editTile.fulfilled, (state, action) => {
-        state.mintingTx = action.payload;
-      })
-      builder.addCase(editTile.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0006, message: "", action: "proof/editTile"};
-        state.mintingTx = "";
-      })
-
     }
 })
 
@@ -135,9 +117,7 @@ export const proofReducerActions = {
   setUserMintedProofs: proofReducerSlice.actions.setUserMintedProofs,
   setMintedProofLoading: proofReducerSlice.actions.setMintedProofLoading,
   setMintPrices: proofReducerSlice.actions.setMintPrices,
-  addProofsToBeMinted: addProofsToBeMinted,
-  generateProofs: generateProofs,
-  editTile: editTile
+  addProofsToBeMinted: addProofsToBeMinted
 }
 
 export default proofReducerSlice.reducer

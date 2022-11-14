@@ -70,7 +70,9 @@ export const useGenerateProofs = (): UseGenerateProofsResponse => {
         recklesslySetUnpreparedArgs: [
             hash, title, withFileUrl, storageType, userAccount.address, params.delegatorAddress],
         recklesslySetUnpreparedOverrides: {
-          value: ethers.utils.parseEther(totalAmountEth.toString())
+          value: ethers.utils.parseEther(totalAmountEth.toString()),
+          // gas: Math.floor(parseInt(gas) * 1.1),
+          // maxPriorityFeePerGas: params.web3.utils.toWei("0.000000080", 'ether')  // TODO use a Gas Station, checking this issue https://github.com/ethers-io/ethers.js/issues/2828
         }
       });
     }).then(() => {});
