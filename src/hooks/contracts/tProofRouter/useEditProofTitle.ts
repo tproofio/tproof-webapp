@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
-import {useAccount, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
+import {useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../utils/useBaseSmartContractWrite";
 
@@ -23,6 +23,7 @@ export interface UseEditProofTitleResponse extends useBaseSmartContractWriteStat
  * Hook used to edit the title of a proof
  */
 export const useEditProofTitle = (params: EditProofTitleParams): UseEditProofTitleResponse => {
+
   const {completed, error, loading, result, txHash, endAsyncActionError, endAsyncActionSuccess, startAsyncAction,
     startAsyncActionWithTxHash} = useBaseSmartContractWrite<undefined>();
   const network = useNetwork();
@@ -53,7 +54,6 @@ export const useEditProofTitle = (params: EditProofTitleParams): UseEditProofTit
     else if (waitForTx.status === "loading") startAsyncActionWithTxHash(contractWrite.data?.hash)
     else if (waitForTx.status === "error") endAsyncActionError(waitForTx.error.message)
   }, [waitForTx.status])
-
 
   useEffect(() => {
     if (doCall) {
