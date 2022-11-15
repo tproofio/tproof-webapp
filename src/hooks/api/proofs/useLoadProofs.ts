@@ -14,12 +14,11 @@ export interface UseLoadProofsResponse extends useBaseAsyncHookState<Proof[]> {
   loadProofs: () => void
 }
 
-export const useLoadProofs = ():  UseLoadProofsResponse => {
+export const useLoadProofs = (chainId: number):  UseLoadProofsResponse => {
 
   const {completed, error, loading, result,
     startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<Proof[]>();
   const userAccount = useAccount();
-  const network = useNetwork();
 
   /**
    * Calls the backend API to load the proofs
@@ -31,7 +30,7 @@ export const useLoadProofs = ():  UseLoadProofsResponse => {
       const alchemyResp: AxiosResponse<OwnedNftsResponse> = await axios.get("https://og6meua7fqc6c7qjxuezxma6uq0wcvjq.lambda-url.eu-west-1.on.aws", {
         params: {
           owner: userAccount.address,
-          network: network.chain.id
+          network: chainId
         }
       });
       let proofs: Proof[] = [];
@@ -48,7 +47,7 @@ export const useLoadProofs = ():  UseLoadProofsResponse => {
         else verificationStatus = ProofVerificationStatus.NotVerified;
         proofs.push({
           id: r.tokenId,
-          chain: network.chain.id,
+          chain: chainId,
           nftNum: nftNum,
           hash: r.rawMetadata.attributes.find(e => e.trait_type === "Hash").value,
           title: r.title,

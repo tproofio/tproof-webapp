@@ -2,6 +2,8 @@ import {useLoadProofs} from "../api/proofs/useLoadProofs";
 import {useEffect} from "react";
 import {proofReducerActions} from "../../store/reducers/proof";
 import {useAppDispatch} from "../redux/reduxHooks";
+import {isSupportedChainId} from "../../utils/Tools/Web3Management";
+import { useNetwork } from "wagmi";
 
 
 /**
@@ -10,7 +12,8 @@ import {useAppDispatch} from "../redux/reduxHooks";
 export const useLoadProofsUI = (): {loadProofs: () => void} => {
 
   const dispatch = useAppDispatch();
-  const loadProofsObj = useLoadProofs();
+  const network = useNetwork();
+  const loadProofsObj = useLoadProofs(network.chain?.id);
 
   useEffect(() => {
     if (loadProofsObj.completed)

@@ -24,11 +24,11 @@ const DApp: React.FC<IDApp> = (props) => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { chain } = useNetwork();
   const loadProofs = useLoadProofsUI();
-  const loadPrices = useLoadPrices();
+  const loadPrices = useLoadPrices(chain?.id);
 
   const { address: connectedWalletAddress } = useAccount();
-  const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
@@ -37,14 +37,19 @@ const DApp: React.FC<IDApp> = (props) => {
   }, [loadPrices.completed]);
 
   useEffect(() => {
+    // TODO check if the fact that we do not listen for connectedWalletAddress is an issue
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
       loadProofs.loadProofs();
       loadPrices.loadPrices();
-    } else if (!connectedWalletAddress) {
+    }
+  }, [chain?.id]);
+
+  useEffect(() => {
+    if (!connectedWalletAddress) {
       // wallet not connected, send back to homepage
       navigate(RouteKey.Home);
     }
-  }, [connectedWalletAddress, chain?.id]);
+  }, [connectedWalletAddress]);
 
   return (
     <Box width={"100%"} minHeight={"100vh"}

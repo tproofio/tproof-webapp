@@ -24,22 +24,21 @@ export interface UseLoadPricesResponse extends useBaseAsyncHookState<LoadPricesR
 /**
  * Hook used to load mint and verification prices.
  */
-export const useLoadPrices = (): UseLoadPricesResponse => {
+export const useLoadPrices = (chainId: number): UseLoadPricesResponse => {
   const {completed, error, loading, result,
     startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<LoadPricesResult>();
-  const network = useNetwork();
   const [doCall, setDoCall] = useState<boolean>(false);
 
   const contractReadMintPrice = useContractRead({
-    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
+    address: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ABI,
     functionName: "MINT_PRICE",
     enabled: doCall
   });
 
   const contractReadVerificationPrice = useContractRead({
-    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
+    address: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ADDRESS,
+    abi: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ABI,
     functionName: "VERIFICATION_PRICE",
     enabled: doCall
   });
