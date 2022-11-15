@@ -1,8 +1,8 @@
 import React from 'react';
 import {Box, Chip, Typography, useMediaQuery} from "@mui/material";
-import {useAppSelector} from "../../../hooks/reduxHooks";
 import {Biotech} from "@mui/icons-material";
 import {theme} from "../../../GlobalStyles";
+import {useNetwork} from "wagmi";
 
 /**
  *
@@ -12,15 +12,11 @@ import {theme} from "../../../GlobalStyles";
  */
 const CommonHeader: React.FC<ICommonHeader> = (props) => {
 
-  const chainId = useAppSelector(state => state.userAccount.chainId);
+  const { chain } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const goToUrl = (_url: string) => {
     window.open(_url, "_blank");
-  }
-
-  const goToHowItWorks = () => {
-    window.open("https://tproof.io", "_blank");
   }
 
   return (
@@ -39,7 +35,7 @@ const CommonHeader: React.FC<ICommonHeader> = (props) => {
         </Typography>
       </Box>
       {
-        chainId === 5 ?
+        chain?.id === 5 ?
           <Box width={"100%"} display={"flex"} alignItems={"center"} justifyContent={"center"}>
             <Chip icon={<Biotech />} color={"secondary"} label="Currently connected on Goerlii Testnet" />
           </Box>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useAppSelector} from '../../../hooks/reduxHooks';
+import {useAppSelector} from '../../../hooks/redux/reduxHooks';
 import {Box, CircularProgress, Typography} from "@mui/material";
 import ProofDetails from "./ProofDetails";
 
@@ -13,7 +13,6 @@ const HomeProofList: React.FC<IHomeProofList> = (props) => {
 
   const mintedProofs = useAppSelector(state => state.proof.mintedProofs);
   const mintedProofsLoading = useAppSelector(state => state.proof.mintedProofsLoading);
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
 
   return (
     <Box>

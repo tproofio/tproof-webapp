@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
-import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
-import {useWeb3} from "../../../hooks/useWeb3";
+import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
 import {Box, Grid, Typography, useMediaQuery} from "@mui/material";
 import {theme} from "../../../GlobalStyles";
 import {isSupportedChainId} from "../../../utils/Tools/Web3Management";
@@ -11,7 +10,9 @@ import HomeNewProofWidget from "../../organisms/Home.NewProofWidget/Home.NewProo
 import UnsupportedChainErrorMessage from "../Home/UnsupportedChainErrorMessage";
 import {useNavigate} from "react-router-dom";
 import {RouteKey} from "../../../App.Routes";
-import {CONTRACTS_DETAILS} from "../../../utils/constants";
+import {useAccount, useNetwork} from "wagmi";
+import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useLoadPrices} from "../../../hooks/contracts/tProofRouter/useLoadPrices";
 
 /**
  *
@@ -22,33 +23,33 @@ import {CONTRACTS_DETAILS} from "../../../utils/constants";
 const DApp: React.FC<IDApp> = (props) => {
 
   const dispatch = useAppDispatch();
-  const web3 = useWeb3();
   const navigate = useNavigate();
+  const { chain } = useNetwork();
+  const loadProofs = useLoadProofsUI();
+  const loadPrices = useLoadPrices(chain?.id);
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
+  const { address: connectedWalletAddress } = useAccount();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (connectedWalletAddress !== "" && isSupportedChainId(chainId) && chainId>0) {
+    if (loadPrices.completed)
+      dispatch(proofReducerActions.setMintPrices(loadPrices.result));
+  }, [loadPrices.completed]);
 
-      // TODO implement event listener subscription to avoid reload all proof, but just the newly minted proof, or listen to status changes
-      dispatch(proofReducerActions.loadProofs({
-        address: connectedWalletAddress,
-        network: chainId
-      }));
+  useEffect(() => {
+    // TODO check if the fact that we do not listen for connectedWalletAddress is an issue
+    if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
+      loadProofs.loadProofs();
+      // loadPrices.loadPrices();
+    }
+  }, [chain?.id]);
 
-      dispatch(proofReducerActions.loadPrices({
-        web3: web3,
-        routerAbi: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ABI,
-        routerAddress: CONTRACTS_DETAILS[chainId].TPROOF_ROUTER_ADDRESS
-      }))
-
-    } else if (connectedWalletAddress === "") {
+  useEffect(() => {
+    if (!connectedWalletAddress) {
       // wallet not connected, send back to homepage
       navigate(RouteKey.Home);
     }
-  }, [connectedWalletAddress, chainId]);
+  }, [connectedWalletAddress]);
 
   return (
     <Box width={"100%"} minHeight={"100vh"}
@@ -69,7 +70,7 @@ const DApp: React.FC<IDApp> = (props) => {
         <Grid item md={1} sm={0}/>
       </Grid>
       {
-        !isSupportedChainId(chainId) ?
+        !isSupportedChainId(chain?.id) ?
           <UnsupportedChainErrorMessage/>
           :
           ""

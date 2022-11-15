@@ -11,10 +11,10 @@ import {
   Typography
 } from "@mui/material";
 import {theme} from "../../../GlobalStyles";
-import {useAppDispatch, useAppSelector} from "../../../hooks/reduxHooks";
-import {proofReducerActions} from "../../../store/reducers/proof";
-import {useWeb3} from "../../../hooks/useWeb3";
-import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
+import {CHAIN_DETAILS} from "../../../utils/constants";
+import {useNetwork} from "wagmi";
+import {useEditProofTitle} from "../../../hooks/contracts/tProofRouter/useEditProofTitle";
+import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
 
 /**
  *
@@ -24,40 +24,31 @@ import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
  */
 const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props) => {
 
-  const dispatch = useAppDispatch();
-  const web3 = useWeb3();
-
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
-  const [nextChangeMintTxCloseModal, setNextChangeMintTxCloseModal] = useState<boolean>(false);
+  const { chain } = useNetwork();
+  const editTitle = useEditProofTitle({
+    nftId: props.nftId,
+    newTitle: newTitleTmp
+  });
+  const loadProofs = useLoadProofsUI();
 
-  const connectedWalletAddress = useAppSelector(state => state.userAccount.connectedWalletAddress);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
-  const mintingTx = useAppSelector(state => state.proof.mintingTx);
+  const mintingTx = editTitle.txHash;
 
   useEffect(() => {
     setNewTitleTmp("");
   }, []);
 
-  // TODO Improve the logic of managing multiple txs in parallel - when listening to events that is solved
-  // lsiten when mint tx is over and closes the modal
+  // listen when mint tx is over and closes the modal
   useEffect(() => {
-    if (mintingTx !== "")
-      setNextChangeMintTxCloseModal(true);
-    if (mintingTx === "" && nextChangeMintTxCloseModal)
+    if (editTitle.completed) {
       props.handleClose();
-  }, [mintingTx]);
+      loadProofs.loadProofs();
+    }
+  }, [editTitle.completed]);
 
   const setNewTitle = () => {
     if (newTitleTmp.length > 0) {
-      dispatch(proofReducerActions.editTile({
-        web3: web3,
-        address: connectedWalletAddress,
-        newTitle: newTitleTmp,
-        nftId: props.nftId,
-        nftAddress: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ADDRESS,
-        nftAbi: CONTRACTS_DETAILS[chainId].TPROOF_NFT_FACTORY_ABI,
-        chainId: chainId
-      }));
+      editTitle.editProofTitle()
     }
   }
 
@@ -92,7 +83,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
           <DialogContent sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
             <CircularProgress/>
             <Typography variant={"body1"} sx={{mt: 1}}>
-              Follow your transaction on <a href={`${CHAIN_DETAILS[chainId].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
+              Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
             </Typography>
           </DialogContent>
       }

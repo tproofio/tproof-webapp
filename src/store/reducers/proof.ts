@@ -3,20 +3,18 @@ import {createSlice} from "@reduxjs/toolkit";
 import {clearError} from "../actions/basicActions";
 import {
   addProofsToBeMinted,
-  editTile,
   editTitleProofToMint,
   emptyProofToBeMinted,
-  generateProofs,
-  loadPrices,
-  loadProofs,
   removeProofToBeMinted,
+  setMintedProofLoading,
+  setMintPrices,
   setMintTxHash,
   setNewProofActiveStep,
   setUploadPerc,
+  setUserMintedProofs,
   toggleFileVerificationToProofToMint,
   toggleFileVerificationToProofToMint_All,
-  toggleUploadingFileToPublish,
-  uploadFilesToS3
+  toggleUploadingFileToPublish
 } from "../actions/proofActions";
 import {ErrorsEnum} from "../../utils/ProjectTypes/Errors.enum";
 import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
@@ -40,10 +38,10 @@ export interface ProofReducer extends BaseReducer {
   mintedProofs: Proof[],
   mintedProofsLoading: boolean,
   proofToBeMinted: ProofToMint[],
-  proofsToBeMintedHasEvaluationPending: boolean,
-  uploadingFileToPublish: boolean,
-  newProofActiveStep: number,
-  mintingTx: string,
+  proofsToBeMintedHasEvaluationPending: boolean,  // remove
+  uploadingFileToPublish: boolean,  // remove
+  newProofActiveStep: number,  // why?
+  mintingTx: string,  // remove
   price: Prices | undefined
 }
 
@@ -79,32 +77,13 @@ export const proofReducerSlice = createSlice({
     toggleUploadingFileToPublish,
     setNewProofActiveStep,
     setMintTxHash,
-    editTitleProofToMint
+    editTitleProofToMint,
+    setUserMintedProofs,
+    setMintedProofLoading,
+    setMintPrices
   },
   extraReducers:
     (builder) => {
-
-      /** Load prices of the service */
-      builder.addCase(loadPrices.fulfilled, (state, action) => {
-        state.price = action.payload;
-      })
-      builder.addCase(loadPrices.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0005, message: "", action: "proof/loadPrices"};
-      })
-
-      /** Load all Proofs of a user */
-      builder.addCase(loadProofs.fulfilled, (state, action) => {
-        state.mintedProofs = action.payload;
-        state.mintedProofsLoading = false;
-      })
-      builder.addCase(loadProofs.pending, (state, action) => {
-        // do nothing, maybe we can add a looper
-        state.mintedProofsLoading = true;
-      })
-      builder.addCase(loadProofs.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0001, message: action.payload as string, action: "proof/loadProofs"};
-        state.mintedProofsLoading = false;
-      })
 
       /** Add proofs to be minted */
       builder.addCase(addProofsToBeMinted.fulfilled, (state, action) => {
@@ -121,36 +100,6 @@ export const proofReducerSlice = createSlice({
         state.proofsToBeMintedHasEvaluationPending = false;
       })
 
-      /** Upload files to be verified on S3 */
-      builder.addCase(uploadFilesToS3.fulfilled, (state, action) => {
-        state.uploadingFileToPublish = false;
-      })
-      builder.addCase(uploadFilesToS3.pending, (state, action) => {
-        state.uploadingFileToPublish = true;
-      })
-      builder.addCase(uploadFilesToS3.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0003, message: "", action: "proof/uploadFilesToS3"};
-        state.uploadingFileToPublish = false;
-      })
-
-      /** Mint Tx */
-      builder.addCase(generateProofs.fulfilled, (state, action) => {
-        state.mintingTx = action.payload;
-      })
-      builder.addCase(generateProofs.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0004, message: "", action: "proof/generateProofs"};
-        state.mintingTx = "";
-      })
-
-      /** Edit Title */
-      builder.addCase(editTile.fulfilled, (state, action) => {
-        state.mintingTx = action.payload;
-      })
-      builder.addCase(editTile.rejected, (state, action) => {
-        state.dispatchError = { code: ErrorsEnum.PROOF_0006, message: "", action: "proof/editTile"};
-        state.mintingTx = "";
-      })
-
     }
 })
 
@@ -165,12 +114,10 @@ export const proofReducerActions = {
   setNewProofActiveStep: proofReducerSlice.actions.setNewProofActiveStep,
   setMintTxHash: proofReducerSlice.actions.setMintTxHash,
   editTitleProofToMint: proofReducerSlice.actions.editTitleProofToMint,
-  loadPrices: loadPrices,
-  loadProofs: loadProofs,
-  addProofsToBeMinted: addProofsToBeMinted,
-  uploadFilesToS3: uploadFilesToS3,
-  generateProofs: generateProofs,
-  editTile: editTile
+  setUserMintedProofs: proofReducerSlice.actions.setUserMintedProofs,
+  setMintedProofLoading: proofReducerSlice.actions.setMintedProofLoading,
+  setMintPrices: proofReducerSlice.actions.setMintPrices,
+  addProofsToBeMinted: addProofsToBeMinted
 }
 
 export default proofReducerSlice.reducer
