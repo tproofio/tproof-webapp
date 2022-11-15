@@ -29,12 +29,14 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
     startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<LoadPricesResult>();
   const network = useNetwork();
   const [doCall, setDoCall] = useState<boolean>(false);
+
   const contractReadMintPrice = useContractRead({
     address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
     functionName: "MINT_PRICE",
     enabled: doCall
   });
+
   const contractReadVerificationPrice = useContractRead({
     address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
@@ -44,13 +46,13 @@ export const useLoadPrices = (): UseLoadPricesResponse => {
 
   useEffect(() => {
     if (doCall) {
+      setDoCall(false);
       const mintPrice = contractReadMintPrice.data as BigNumber;
       const verificationPrice = contractReadVerificationPrice.data as BigNumber;
       endAsyncActionSuccess({
         mint: parseFloat(ethers.utils.formatEther(mintPrice)),
         verification: parseFloat(ethers.utils.formatEther(verificationPrice))
       });
-      setDoCall(false);
     }
   }, [doCall]);
 

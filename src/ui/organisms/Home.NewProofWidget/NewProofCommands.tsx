@@ -20,17 +20,21 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
   const dispatch = useAppDispatch();
   const fileListCache = useFileListCache();
 
-  const { address: connectedWalletAddress } = useAccount();
-  const { chain } = useNetwork();
-  const useUploadFilesObj = useUploadFiles();
-  const generateProofs = useGenerateProofs();
-  const loadProofs = useLoadProofs();
-
   const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
   const activeStepNum = useAppSelector(state => state.proof.newProofActiveStep);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
   const mintingTx = useAppSelector(state => state.proof.mintingTx);
   const price = useAppSelector(state => state.proof.price);
+
+  const { address: connectedWalletAddress } = useAccount();
+  const { chain } = useNetwork();
+  const useUploadFilesObj = useUploadFiles();
+  const generateProofs = useGenerateProofs({
+    proofs: proofToBeMinted,
+    delegatorAddress: CONTRACTS_DETAILS[chain?.id]?.DELEGATOR_ADDRESS,
+    price
+  });
+  const loadProofs = useLoadProofs();
 
   // launch the upload of objects on S3
   useEffect(() => {
@@ -101,11 +105,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
    * Starts the mint transaction
    */
   const generateProofsAction = () => {
-    generateProofs.generateProofs({
-      proofs: proofToBeMinted,
-      delegatorAddress: CONTRACTS_DETAILS[chain?.id].DELEGATOR_ADDRESS,
-      price
-    });
+    generateProofs.generateProofs();
   }
 
 

@@ -56,11 +56,11 @@ export const useEditProofTitle = (params: EditProofTitleParams): UseEditProofTit
   }, [waitForTx.status])
 
   useEffect(() => {
-    if (doCall) {
-      contractWrite.write();
+    if (doCall && contractWrite.write) {
       setDoCall(false);
+      contractWrite.write();
     }
-  }, [doCall])
+  }, [prepareContractWrite]);
 
   const editProofTitle = (): void => {
     startAsyncAction();

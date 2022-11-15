@@ -32,6 +32,8 @@ export const useGenerateProofs = (params: UseGenerateProofParams): UseGeneratePr
   const network = useNetwork();
   const userAccount = useAccount();
   const [doCall, setDoCall] = useState<boolean>(false);
+
+
   const args = useMemo(() => {
 
     let hash: string[] = [];
@@ -50,11 +52,16 @@ export const useGenerateProofs = (params: UseGenerateProofParams): UseGeneratePr
       hash, title, withFileUrl, storageType, userAccount.address, params.delegatorAddress
     ]
   }, [params]);
-  let totalAmountEth = (
-          params.proofs.map((proof): number => proof.toBeVerified ? 1 : 0)
-              .reduce((a, b) => a + b)
+
+  let totalAmountEth = useMemo(() => {
+    if (params.proofs.length === 0 || !params.price) return 0;
+    return (
+        params.proofs.map((proof): number => proof.toBeVerified ? 1 : 0)
+          .reduce((a, b) => a + b, 0)
       ) * params.price.verification
-      + (params.proofs.length * params.price.mint);
+      + (params.proofs.length * params.price.mint)
+  }, [params]);
+
   const prepareContractWrite = usePrepareContractWrite({
     address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_ROUTER_ABI,
@@ -65,6 +72,7 @@ export const useGenerateProofs = (params: UseGenerateProofParams): UseGeneratePr
       value: ethers.utils.parseEther(totalAmountEth.toString()),
     }
   });
+
   const contractWrite = useContractWrite(prepareContractWrite.config);
   const waitForTx = useWaitForTransaction({
     hash: contractWrite.data?.hash,
@@ -77,11 +85,11 @@ export const useGenerateProofs = (params: UseGenerateProofParams): UseGeneratePr
   }, [waitForTx.status]);
 
   useEffect(() => {
-    if (doCall) {
-      contractWrite.write();
+    if (doCall && contractWrite.write) {
       setDoCall(false);
+      contractWrite.write();
     }
-  }, [doCall]);
+  }, [prepareContractWrite]);
 
   const generateProofs = (): void => {
     startAsyncAction();
