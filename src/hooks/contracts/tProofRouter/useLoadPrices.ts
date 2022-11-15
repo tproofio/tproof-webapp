@@ -33,6 +33,7 @@ export const useLoadPrices = (chainId: number): useBaseAsyncHookState<LoadPrices
     functionName: "VERIFICATION_PRICE"
   });
 
+  // once data il loaded, return
   useEffect(() => {
     if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
       const mintPrice = contractReadMintPrice.data as BigNumber;
@@ -44,6 +45,7 @@ export const useLoadPrices = (chainId: number): useBaseAsyncHookState<LoadPrices
     }
   }, [contractReadMintPrice.data, contractReadVerificationPrice.data])
 
+  // set as loading while data is fetching
   useEffect(() => {
     if (contractReadMintPrice.isLoading || contractReadVerificationPrice.isLoading)
       startAsyncAction();
