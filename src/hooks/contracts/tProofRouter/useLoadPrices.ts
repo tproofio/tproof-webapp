@@ -15,37 +15,26 @@ export interface LoadPricesResult {
 }
 
 /**
- * @param {function} loadPrices
- */
-export interface UseLoadPricesResponse extends useBaseAsyncHookState<LoadPricesResult> {
-  loadPrices: () => void
-}
-
-/**
  * Hook used to load mint and verification prices.
  */
-export const useLoadPrices = (chainId: number): UseLoadPricesResponse => {
+export const useLoadPrices = (chainId: number): useBaseAsyncHookState<LoadPricesResult> => {
   const {completed, error, loading, result,
     startAsyncAction, endAsyncActionSuccess, endAsyncActionError} = useBaseAsyncHook<LoadPricesResult>();
-  const [doCall, setDoCall] = useState<boolean>(false);
 
   const contractReadMintPrice = useContractRead({
     address: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ABI,
-    functionName: "MINT_PRICE",
-    enabled: doCall
+    functionName: "MINT_PRICE"
   });
 
   const contractReadVerificationPrice = useContractRead({
     address: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ADDRESS,
     abi: CONTRACTS_DETAILS[chainId]?.TPROOF_ROUTER_ABI,
-    functionName: "VERIFICATION_PRICE",
-    enabled: doCall
+    functionName: "VERIFICATION_PRICE"
   });
 
   useEffect(() => {
     if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
-      setDoCall(false);
       const mintPrice = contractReadMintPrice.data as BigNumber;
       const verificationPrice = contractReadVerificationPrice.data as BigNumber;
       endAsyncActionSuccess({
@@ -55,9 +44,10 @@ export const useLoadPrices = (chainId: number): UseLoadPricesResponse => {
     }
   }, [contractReadMintPrice.data, contractReadVerificationPrice.data])
 
-  const loadPrices = (): void => {
-    startAsyncAction();
-    setDoCall(true);
-  };
-  return { completed, error, loading, result, loadPrices };
+  useEffect(() => {
+    if (contractReadMintPrice.isLoading || contractReadVerificationPrice.isLoading)
+      startAsyncAction();
+  }, [contractReadMintPrice.isLoading, contractReadVerificationPrice.isLoading])
+
+  return { completed, error, loading, result };
 }

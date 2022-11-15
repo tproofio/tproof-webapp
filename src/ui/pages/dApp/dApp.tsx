@@ -40,7 +40,7 @@ const DApp: React.FC<IDApp> = (props) => {
     // TODO check if the fact that we do not listen for connectedWalletAddress is an issue
     if (connectedWalletAddress && isSupportedChainId(chain?.id)) {
       loadProofs.loadProofs();
-      loadPrices.loadPrices();
+      // loadPrices.loadPrices();
     }
   }, [chain?.id]);
 
