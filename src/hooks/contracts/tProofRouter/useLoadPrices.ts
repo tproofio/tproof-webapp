@@ -44,7 +44,7 @@ export const useLoadPrices = (chainId: number): UseLoadPricesResponse => {
   });
 
   useEffect(() => {
-    if (doCall) {
+    if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
       setDoCall(false);
       const mintPrice = contractReadMintPrice.data as BigNumber;
       const verificationPrice = contractReadVerificationPrice.data as BigNumber;
@@ -53,7 +53,7 @@ export const useLoadPrices = (chainId: number): UseLoadPricesResponse => {
         verification: parseFloat(ethers.utils.formatEther(verificationPrice))
       });
     }
-  }, [doCall]);
+  }, [contractReadMintPrice.data, contractReadVerificationPrice.data])
 
   const loadPrices = (): void => {
     startAsyncAction();
