@@ -7,11 +7,12 @@ import {Provider} from "react-redux";
 import {store} from "./store";
 import {CssBaseline, StyledEngineProvider, ThemeProvider} from "@mui/material";
 import {theme} from "./GlobalStyles";
-import {chain, createClient, WagmiConfig} from "wagmi";
+import {createClient, goerli, WagmiConfig} from "wagmi";
 import {ConnectKitProvider, getDefaultClient} from "connectkit";
+import {hardhat, polygon} from "@wagmi/chains";
 
 
-const chains = [chain.goerli, chain.polygon, chain.hardhat];
+const chains = [goerli, polygon, hardhat];
 const client = createClient(
   getDefaultClient({
     appName: "tProof",
