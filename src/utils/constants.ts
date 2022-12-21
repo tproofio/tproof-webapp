@@ -28,12 +28,14 @@ export const CONTRACTS_DETAILS: {5: DeploymentContractsDetails, 137: DeploymentC
 export const CHAIN_DETAILS: {5: ChainDetails, 137: ChainDetails} = {
   5: {
     EXPLORER_URL: "https://goerli.etherscan.io",
+    EXPLORER_NAME: "Etherscan",
     OPENSEA_CHAIN_NAME: "goerli",
     ID: 5,
     IS_TESTNET: true
   },
   137: {
     EXPLORER_URL: "https://polygonscan.com",
+    EXPLORER_NAME: "Polygonscan",
     OPENSEA_CHAIN_NAME: "matic",
     ID: 137,
     IS_TESTNET: false

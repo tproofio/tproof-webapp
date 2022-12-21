@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Button, Step, StepLabel, Stepper, Typography} from "@mui/material";
-import {useAppDispatch, useAppSelector} from '../../../hooks/reduxHooks';
+import {useAppDispatch, useAppSelector} from '../../../hooks/redux/reduxHooks';
 import FileListStep0 from "./FileListStep0";
 import NewProofCommands from "./NewProofCommands";
 import FileListStep1 from "./FileListStep1";

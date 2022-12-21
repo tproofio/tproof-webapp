@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../../hooks/reduxHooks';
+import {useAppDispatch, useAppSelector} from '../../../hooks/redux/reduxHooks';
 import {
   Box,
   Button,
@@ -16,9 +16,10 @@ import {
 } from "@mui/material";
 import prettyBytes from 'pretty-bytes';
 import {proofReducerActions} from "../../../store/reducers/proof";
-import {useFileListCache} from "../../../hooks/fileListHook";
+import {useFileListCache} from "../../../hooks/utils/fileListHook";
 import {Clear, InfoOutlined} from "@mui/icons-material";
 import {MAX_FILE_SIZE_SUPPORTED_BYTES} from "../../../utils/constants";
+import {useNetwork} from "wagmi";
 
 /**
  *
@@ -30,6 +31,7 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
 
   const dispatch = useAppDispatch();
   const fileListCache = useFileListCache();
+  const { chain } = useNetwork();
 
   const [showPublishHelpDialog, setShowPublishHelpDialog, ] = useState<boolean>(false);
 
@@ -37,7 +39,6 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
   const proofsToBeMintedHasEvaluationPending = useAppSelector(state => state.proof.proofsToBeMintedHasEvaluationPending);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
   const price = useAppSelector(state => state.proof.price);
-  const chainId = useAppSelector(state => state.userAccount.chainId);
 
   /**
    * Appends the files selected by the user to the list of files to remember
@@ -92,12 +93,15 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
           <Typography variant="h4">File</Typography>
         </Grid>
         <Grid item xs={3} display={"flex"} alignItems={"center"}>
-          <Tooltip title={`Click to publish/unpublish all the files`} placement={"top"} arrow followCursor>
-            <Typography variant="h4" sx={{cursor: "pointer"}} onClick={turnOnOffAllFilePublish}>
-              Publish
-            </Typography>
-          </Tooltip>
-          <InfoOutlined sx={{ml: 1, fontSize: 16, mb: "4px", cursor: "help"}} onClick={() => {setShowPublishHelpDialog(true)}}/>
+          {/*
+             // disable all the upload of files until a more stable version of the Chainlink node is set up
+           */}
+          {/*<Tooltip title={`Click to publish/unpublish all the files`} placement={"top"} arrow followCursor>*/}
+          {/*  <Typography variant="h4" sx={{cursor: "pointer"}} onClick={turnOnOffAllFilePublish}>*/}
+          {/*    Publish*/}
+          {/*  </Typography>*/}
+          {/*</Tooltip>*/}
+          {/*<InfoOutlined sx={{ml: 1, fontSize: 16, mb: "4px", cursor: "help"}} onClick={() => {setShowPublishHelpDialog(true)}}/>*/}
         </Grid>
       </Grid>
 
@@ -140,14 +144,17 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
               </Grid>
               {/* Publish checkbox */}
               <Grid item xs={3}>
-                <Tooltip title={p.size > MAX_FILE_SIZE_SUPPORTED_BYTES ? "Currently supporting only files up to 100MB. Need more space? Contact Us!" : ""}
-                         placement={"top"} arrow followCursor>
-                  <span>
-                    <Checkbox checked={p.toBeVerified}
-                              onChange={() => {toggleFilePublish(pos)}}
-                              disabled={p.size > MAX_FILE_SIZE_SUPPORTED_BYTES || chainId !== 5}/>
-                  </span>
-                </Tooltip>
+                {/*
+                    // disable all the upload of files until a more stable version of the Chainlink node is set up
+                */}
+                {/*<Tooltip title={p.size > MAX_FILE_SIZE_SUPPORTED_BYTES ? "Currently supporting only files up to 100MB. Need more space? Contact Us!" : ""}*/}
+                {/*         placement={"top"} arrow followCursor>*/}
+                {/*  <span>*/}
+                {/*    <Checkbox checked={p.toBeVerified}*/}
+                {/*              onChange={() => {toggleFilePublish(pos)}}*/}
+                {/*              disabled={p.size > MAX_FILE_SIZE_SUPPORTED_BYTES}/>*/}
+                {/*  </span>*/}
+                {/*</Tooltip>*/}
               </Grid>
             </Grid>
           )

@@ -107,12 +107,14 @@ export type DeploymentContractsDetails = {
  *
  * @param {number} ID - the ID of the chain
  * @param {string} EXPLORER_URL - the initial part of the explorer url (ex.  "https://etherscan.io")
+ * @param {string} EXPLORER_NAME - name of the explorer
  * @param {string} OPENSEA_CHAIN_NAME - the name of the chain in the URL of opensea
  * @param {boolean} IS_TESTNET - true if it's a testnet, false otherwise
  */
 export type ChainDetails = {
   ID: number,
   EXPLORER_URL: string,
+  EXPLORER_NAME: string,
   OPENSEA_CHAIN_NAME: string,
   IS_TESTNET: boolean
 }
