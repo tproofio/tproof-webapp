@@ -10,25 +10,6 @@ import {theme} from "./GlobalStyles";
 import {chain, createClient, WagmiConfig} from "wagmi";
 import {ConnectKitProvider, getDefaultClient} from "connectkit";
 
-// set up sentry only if in a production mode
-// TODO insert sentry
-// if (process.env.NODE_ENV === "production") {
-//   let sentryErrorCache = [];
-//   Sentry.init({
-//     dsn: "https://238a2a93bd804a8ab2e704845dabb150@o904010.ingest.sentry.io/5843261",
-//     integrations: [new Integrations.BrowserTracing()],
-//     beforeSend(event: Event, hint?: EventHint): PromiseLike<Event | null> | Event | null {
-//       if (event.exception.values && event.exception.values.length>0) {
-//         let errValue = event.exception.values[0].value;
-//         if (sentryErrorCache.indexOf(errValue) === -1) {
-//           sentryErrorCache.push(errValue);
-//           return event;
-//         } else return ;
-//       } else return event;
-//     },
-//     tracesSampleRate: 0.0,
-//   });
-// }
 
 const chains = [chain.goerli, chain.polygon, chain.hardhat];
 const client = createClient(

@@ -46,6 +46,7 @@ export const useUploadFiles = (): UseUploadFilesResponse => {
   const upload = (fileList: UseUploadFilesParams[]): void => {
 
     new Promise( async (resolve, reject) => {
+
       // creates all the promises, one for each file
       for (let fi=0; fi<fileList.length; fi++) {
         let f = fileList[fi];

@@ -71,6 +71,9 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
     }
   }, [useUploadFilesObj.completed])
 
+  console.log("uploadingFileToPublishu", uploadingFileToPublish);
+  console.log("useUploadFilesObj", useUploadFilesObj);
+
   // manages the states of tx minting
   useEffect(() => {
     if (generateProofs.loading)
@@ -78,6 +81,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
     else if (generateProofs.completed) {
       dispatch(proofReducerActions.setNewProofActiveStep(0));
       dispatch(proofReducerActions.emptyProofToBeMinted());
+      dispatch(proofReducerActions.setMintTxHash(""));
       loadProofs.loadProofs();
     }
   }, [generateProofs.completed, generateProofs.loading, generateProofs.txHash])
@@ -98,8 +102,12 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
    * Starts the upload file process
    */
   const uploadFiles = () => {
-    dispatch(proofReducerActions.toggleUploadingFileToPublish(true));
-    // the start to the upload is triggered by the useState that listens for the change on uploadingFileToPublish variable
+    // dispatch(proofReducerActions.toggleUploadingFileToPublish(true));
+    // // the start to the upload is triggered by the useState that listens for the change on uploadingFileToPublish variable
+
+    // the upload of files has bene disabled, and so we can immediately go to the next step
+    // TODO improve the logic of the hook to upload files
+    dispatch(proofReducerActions.setNewProofActiveStep(1));
   }
 
   /**
@@ -138,7 +146,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
               // show tx ID if we're minting, with a link to Etherescan
               mintingTx !== "" ?
                 <Typography variant="body2" sx={{mt: 1}}>
-                  Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
+                  Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>{CHAIN_DETAILS[chain?.id].EXPLORER_NAME}</a>
                 </Typography>
                 :
                 ""

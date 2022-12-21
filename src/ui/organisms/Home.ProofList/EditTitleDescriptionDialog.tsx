@@ -83,7 +83,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
           <DialogContent sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
             <CircularProgress/>
             <Typography variant={"body1"} sx={{mt: 1}}>
-              Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>Etherscan</a>
+              Follow your transaction on <a href={`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/tx/${mintingTx}`} target={"_blank"}>{CHAIN_DETAILS[chain?.id].EXPLORER_NAME}</a>
             </Typography>
           </DialogContent>
       }
