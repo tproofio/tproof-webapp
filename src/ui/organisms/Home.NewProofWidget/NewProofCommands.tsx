@@ -7,8 +7,7 @@ import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
 import {useUploadFiles} from "../../../hooks/aws/s3/useUploadFiles";
 import {useGenerateProofs} from "../../../hooks/contracts/tProofRouter/useGenerateProofs";
-import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
-import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useLoadPublicProofsUI} from "../../../hooks/ui/useLoadPublicProofsUI";
 
 /**
  *
@@ -35,7 +34,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
     delegatorAddress: CONTRACTS_DETAILS[chain?.id]?.DELEGATOR_ADDRESS,
     price
   });
-  const loadProofs = useLoadProofsUI();
+  const loadProofs = useLoadPublicProofsUI();
 
   // launch the upload of objects on S3
   useEffect(() => {

@@ -14,7 +14,7 @@ import {theme} from "../../../GlobalStyles";
 import {CHAIN_DETAILS} from "../../../utils/constants";
 import {useNetwork} from "wagmi";
 import {useEditProofTitle} from "../../../hooks/contracts/tProofRouter/useEditProofTitle";
-import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useLoadPublicProofsUI} from "../../../hooks/ui/useLoadPublicProofsUI";
 
 /**
  *
@@ -30,7 +30,7 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
     nftId: props.nftId,
     newTitle: newTitleTmp
   });
-  const loadProofs = useLoadProofsUI();
+  const loadProofs = useLoadPublicProofsUI();
 
   const mintingTx = editTitle.txHash;
 

@@ -7,37 +7,53 @@ import {Provider} from "react-redux";
 import {store} from "./store";
 import {CssBaseline, StyledEngineProvider, ThemeProvider} from "@mui/material";
 import {theme} from "./GlobalStyles";
-import {createClient, goerli, WagmiConfig} from "wagmi";
-import {ConnectKitProvider, getDefaultClient} from "connectkit";
+import {configureChains, createClient, goerli, WagmiConfig} from "wagmi";
 import {hardhat, polygon} from "@wagmi/chains";
+import {EthereumClient, w3mConnectors, w3mProvider} from "@web3modal/ethereum";
+import {Web3Modal} from "@web3modal/react";
 
-
-const chains = [goerli, polygon, hardhat];
-const client = createClient(
-  getDefaultClient({
-    appName: "tProof",
-    autoConnect: false,
-    chains
+// ----------------
+// WAGMI CLIENT
+// ----------------
+const chains = [polygon, goerli, hardhat];
+const { provider } = configureChains(chains, [
+  w3mProvider({ projectId: process.env.REACT_APP_WALLETCONNECT_PROJECT_ID as string }),
+]);
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors: w3mConnectors({
+    projectId: process.env.REACT_APP_WALLETCONNECT_PROJECT_ID as string,
+    version: 1,
+    chains,
   }),
-);
+  provider,
+});
+
+// Web3Modal Ethereum Client
+const ethereumClient = new EthereumClient(wagmiClient, chains);
+
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <Provider store={store}>
-      <WagmiConfig client={client}>
-        <ConnectKitProvider>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <App />
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </ConnectKitProvider>
+      <WagmiConfig client={wagmiClient}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </WagmiConfig>
+      <Web3Modal
+        projectId={process.env.REACT_APP_WALLETCONNECT_PROJECT_ID as string}
+        ethereumClient={ethereumClient}
+        themeMode={"light"}
+        termsOfServiceUrl={"https://tproof.io/privacy-policy"}
+      />
     </Provider>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 

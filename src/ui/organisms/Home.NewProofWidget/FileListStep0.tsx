@@ -3,7 +3,6 @@ import {useAppDispatch, useAppSelector} from '../../../hooks/redux/reduxHooks';
 import {
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -17,8 +16,7 @@ import {
 import prettyBytes from 'pretty-bytes';
 import {proofReducerActions} from "../../../store/reducers/proof";
 import {useFileListCache} from "../../../hooks/utils/fileListHook";
-import {Clear, InfoOutlined} from "@mui/icons-material";
-import {MAX_FILE_SIZE_SUPPORTED_BYTES} from "../../../utils/constants";
+import {Clear} from "@mui/icons-material";
 import {useNetwork} from "wagmi";
 
 /**

@@ -1,9 +1,6 @@
 import {CaseReducer, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
-import {address, Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
-import Web3 from "web3";
-import {ProofReducer, proofReducerActions} from "../reducers/proof";
-import {AbiItem} from 'web3-utils';
-import {Chain} from "../../utils/ProjectTypes/Project.enum";
+import {Prices, Proof, ProofToMint} from "../../utils/ProjectTypes/Project.types";
+import {ProofReducer} from "../reducers/proof";
 import {fileToHash} from "../../utils/Tools/FileManagement";
 
 
