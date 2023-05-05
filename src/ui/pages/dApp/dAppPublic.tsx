@@ -3,7 +3,6 @@ import {Box, Grid, Typography, useMediaQuery} from "@mui/material";
 import {theme} from "../../../GlobalStyles";
 import HomeProofList from "../../organisms/Home.ProofList/Home.ProofList";
 import HomeNewProofWidget from "../../organisms/Home.NewProofWidget/Home.NewProofWidget";
-import {useLoadProofs} from "../../../hooks/api/proofs/useLoadProofs";
 import {useAccount, useNetwork} from "wagmi";
 import {useProofs} from "../../../context/Proofs/ProofsProvider";
 import {isSupportedChainId} from "../../../utils/Tools/Web3Management";
@@ -27,9 +26,17 @@ const DAppPublic: React.FC<IDAppPublic> = (props) => {
   useEffect(() => {
     if (account.address && account.isConnected && isSupportedChainId(chain?.id)) {
       loadProofs.loadProofs();
-      // loadPrices.loadPrices();  -  TODO should we load here or in the main component (?) - I think here as in the ain component we don't know yet anything
     }
   }, [chain?.id]);
+
+  useEffect(() => {
+    if (account.address && account.isConnected && isSupportedChainId(chain?.id) && loadPrices.completed) {
+      proofs.setMintPrices({
+        mint: loadPrices.result.mint,
+        verification: loadPrices.result.verification
+      });
+    }
+  }, [loadPrices.completed]);
 
   return (
     <Grid container  sx={{mt: 3, mb: 5}} direction={isMobile ? "column-reverse" : "row"}>

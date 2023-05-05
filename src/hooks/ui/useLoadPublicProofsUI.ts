@@ -1,9 +1,6 @@
 import {useLoadProofs} from "../api/proofs/useLoadProofs";
 import {useEffect} from "react";
-import {proofReducerActions} from "../../store/reducers/proof";
-import {useAppDispatch} from "../redux/reduxHooks";
-import {isSupportedChainId} from "../../utils/Tools/Web3Management";
-import { useNetwork } from "wagmi";
+import {useNetwork} from "wagmi";
 import {useProofs} from "../../context/Proofs/ProofsProvider";
 
 

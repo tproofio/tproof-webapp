@@ -1,5 +1,4 @@
 import React from 'react';
-import {useAppSelector} from '../../../hooks/redux/reduxHooks';
 import {Box, CircularProgress, Typography} from "@mui/material";
 import ProofDetails from "./ProofDetails";
 import {useProofs} from "../../../context/Proofs/ProofsProvider";

@@ -2,6 +2,8 @@ import {useContractRead} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useBaseAsyncHook, useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
 import {useEffect} from "react";
+import {ethers} from "ethers";
+import {BigNumber} from "@ethersproject/bignumber";
 
 /**
  * @param {number} mint
@@ -33,14 +35,14 @@ export const useLoadPrices = (chainId: number): useBaseAsyncHookState<LoadPrices
 
   // once data il loaded, return
   useEffect(() => {
-    // if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
-    //   const mintPrice = contractReadMintPrice.data as BigNumber;
-    //   const verificationPrice = contractReadVerificationPrice.data as BigNumber;
-    //   endAsyncActionSuccess({
-    //     mint: parseFloat(ethers.utils.formatEther(mintPrice)),
-    //     verification: parseFloat(ethers.utils.formatEther(verificationPrice))
-    //   });
-    // }
+    if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
+      const mintPrice = contractReadMintPrice.data as unknown as BigNumber;
+      const verificationPrice = contractReadVerificationPrice.data as unknown as BigNumber;
+      endAsyncActionSuccess({
+        mint: parseFloat(ethers.utils.formatEther(mintPrice)),
+        verification: parseFloat(ethers.utils.formatEther(verificationPrice))
+      });
+    }
   }, [contractReadMintPrice.data, contractReadVerificationPrice.data])
 
   // set as loading while data is fetching

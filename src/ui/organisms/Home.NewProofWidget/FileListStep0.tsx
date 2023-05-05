@@ -18,6 +18,9 @@ import {proofReducerActions} from "../../../store/reducers/proof";
 import {useFileListCache} from "../../../hooks/utils/fileListHook";
 import {Clear} from "@mui/icons-material";
 import {useNetwork} from "wagmi";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
+import {ProofToMint} from "../../../utils/ProjectTypes/Project.types";
+import {fileToHash} from "../../../utils/Tools/FileManagement";
 
 /**
  *
@@ -30,23 +33,36 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
   const dispatch = useAppDispatch();
   const fileListCache = useFileListCache();
   const { chain } = useNetwork();
+  const proofs = useProofs();
 
   const [showPublishHelpDialog, setShowPublishHelpDialog, ] = useState<boolean>(false);
 
-  const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
-  const proofsToBeMintedHasEvaluationPending = useAppSelector(state => state.proof.proofsToBeMintedHasEvaluationPending);
   const uploadingFileToPublish = useAppSelector(state => state.proof.uploadingFileToPublish);
-  const price = useAppSelector(state => state.proof.price);
 
   /**
    * Appends the files selected by the user to the list of files to remember
    * @param e
    */
-  const fileSelectedAppend = (e) => {
+  const fileSelectedAppend = async (e) => {
     if (e && e.target && e.target.files) {
+      proofs.setProofsToBeMintedHasEvaluationPending(true);
       let fileList = e.target.files as FileList;
       let ids = fileListCache.appendToFileListCache(fileList);
-      dispatch(proofReducerActions.addProofsToBeMinted({ fileList: e.target.files as FileList, ids} ));
+      let filesToBeMinted: ProofToMint[] = proofs.data.proofToBeMinted;
+      for (let fi = 0; fi < e.target.files.length; fi++) {
+        let file: File = e.target.files.item(fi);
+        filesToBeMinted.push({
+          id: ids[fi],
+          title: "",
+          fileName: file.name,
+          size: file.size,
+          toBeVerified: false,
+          hash: await fileToHash(file),
+          uploadPerc: 0
+        })
+      }
+      proofs.setProofToBeMinted(filesToBeMinted);
+      proofs.setProofsToBeMintedHasEvaluationPending(false);
     }
   }
 
@@ -64,8 +80,10 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
    * @param {number} pos - the number of the element in the array list
    */
   const removeFileElement = (pos: number) => {
-    fileListCache.removeFileFromListCache(proofToBeMinted[pos].id);
-    dispatch(proofReducerActions.removeProofToBeMinted(pos));
+    fileListCache.removeFileFromListCache(proofs.data.proofToBeMinted[pos].id);
+    let currentElements = proofs.data.proofToBeMinted;
+    currentElements.splice(pos, 1);
+    proofs.setProofToBeMinted(JSON.parse(JSON.stringify(currentElements)));
   }
 
   /**
@@ -75,7 +93,7 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
     if (uploadingFileToPublish) return;
     // check if they're all on
     let allOn = true;
-    for (let p of proofToBeMinted) {
+    for (let p of proofs.data.proofToBeMinted) {
       if (!p.toBeVerified) {
         allOn = false;
         break;
@@ -104,7 +122,7 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
       </Grid>
 
       {
-        proofToBeMinted.map((p, pos) => {
+        proofs.data.proofToBeMinted.map((p, pos) => {
           let title = p.fileName;
           if (title.length > 30) {
             title = title.substring(0, 11) + "..." + title.substring(title.length - 11, title.length);
@@ -161,17 +179,17 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
 
       {/* ADD MORE FILEs button*/}
       {
-        proofToBeMinted.length > 0 || proofsToBeMintedHasEvaluationPending ?
+        proofs.data.proofToBeMinted.length > 0 || proofs.data.proofsToBeMintedHasEvaluationPending ?
           <Box mt={2}>
             {
-              proofsToBeMintedHasEvaluationPending ?
+              proofs.data.proofsToBeMintedHasEvaluationPending ?
                 <Box width={"100%"} display={"flex"} justifyContent={"center"}>
                   <CircularProgress/>
                 </Box>
                 :
                 <Button variant={"outlined"}component="label" disabled={uploadingFileToPublish}>
                   + Add more files
-                  <input hidden accept="*/*" multiple type="file" onChange={fileSelectedAppend} />
+                  <input hidden accept="*/*" multiple type="file" onChange={(e) => fileSelectedAppend(e).then(() => {})} />
                 </Button>
             }
           </Box>
@@ -192,7 +210,7 @@ const FileListStep0: React.FC<IFileListStep0> = (props) => {
             Due to the decentralized nature of tProof protocol, once the file is published on Arweave, a <strong>ChainLink node</strong> will take care of downloading the file and checking it matches the given hash.
           </Typography>
           <Typography variant={"body1"} sx={{mt: 1}}>
-            While the simple hash publication costs {(price.mint).toFixed(2)} Ξ, the add of <strong>file publications</strong> brings the cost to {(price.mint + price.verification).toFixed(2)} Ξ.
+            While the simple hash publication costs {(proofs.data.price.mint).toFixed(2)} Ξ, the add of <strong>file publications</strong> brings the cost to {(proofs.data.price.mint + proofs.data.price.verification).toFixed(2)} Ξ.
           </Typography>
           <Typography variant={"body1"} sx={{mt: 1}}>
             Read more about it <a href ="https://docs.tproof.io" target={"_blank"}>on our Documentation</a>
