@@ -50,6 +50,9 @@
     "web3": "^1.7.4",
     "web3modal": "^1.9.8"
   },
+  "resolutions": {
+    "@walletconnect/ethereum-provider": "2.7.0"
+  },
   "scripts": {
     "start": "env-cmd -f .env.dev craco start",
     "build": "env-cmd -f .env.production craco build",
