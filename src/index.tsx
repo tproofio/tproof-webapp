@@ -8,14 +8,14 @@ import {store} from "./store";
 import {CssBaseline, StyledEngineProvider, ThemeProvider} from "@mui/material";
 import {theme} from "./GlobalStyles";
 import {configureChains, createClient, goerli, WagmiConfig} from "wagmi";
-import {hardhat, polygon} from "@wagmi/chains";
+import {hardhat, polygon, polygonMumbai} from "@wagmi/chains";
 import {EthereumClient, w3mConnectors, w3mProvider} from "@web3modal/ethereum";
 import {Web3Modal} from "@web3modal/react";
 
 // ----------------
 // WAGMI CLIENT
 // ----------------
-const chains = [polygon, goerli, hardhat];
+const chains = [polygon, goerli, polygonMumbai, hardhat];
 const { provider } = configureChains(chains, [
   w3mProvider({ projectId: process.env.REACT_APP_WALLETCONNECT_PROJECT_ID as string }),
 ]);

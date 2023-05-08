@@ -27,6 +27,9 @@ const DAppPrivate: React.FC<IDAppPrivate> = (props) => {
   const loadAddressFromProjectId = useLoadAddressFromProjectId(chain?.id, projectId);
   const loadProofs = useLoadPrivateProofsUI(loadAddressFromProjectId.result);
 
+  console.log(proofs.data);
+  console.log(loadAddressFromProjectId.completed);
+
   useEffect(() => {
     proofs.setMintPrices({
       mint: 0,
@@ -36,10 +39,11 @@ const DAppPrivate: React.FC<IDAppPrivate> = (props) => {
 
   useEffect(() => {
     if (account.address && account.isConnected && isSupportedChainId(chain?.id) && loadAddressFromProjectId.completed) {
-      proofs.setPrivateCollectionAddress(loadAddressFromProjectId.result as address);
-      loadProofs.loadMore();
+      if (!proofs.data.privateCollectionAddress)
+        proofs.setPrivateCollectionAddress(loadAddressFromProjectId.result as address);
+      else loadProofs.loadMore();
     }
-  }, [chain?.id, loadAddressFromProjectId.completed, loadAddressFromProjectId.result]);
+  }, [chain?.id, loadAddressFromProjectId.completed, loadAddressFromProjectId.result, proofs.data.privateCollectionAddress]);
 
 
   return (

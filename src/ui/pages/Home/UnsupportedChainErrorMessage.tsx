@@ -15,8 +15,8 @@ const UnsupportedChainErrorMessage: React.FC<IUnsupportedChainErrorMessage> = (p
       <Paper sx={{p: 3, textAlign: "center"}}>
         You're connected to an unsupported chain!<br/><br/>
         Please connect to <strong>Polygon</strong> (chain ID 137)<br/><br/>
-        If you need to test the solution, use <strong>Goerli Testnet</strong> (chain ID 5)<br/>
-        Soon we'll be live on <strong>Ethereum Mainnet</strong>, make sure to follow us on <a href={"https://twitter.com/tproofio"} target={"_blank"}>Twitter</a>!
+        If you need to test the solution, use <strong>Mumbai Testnet</strong> (chain ID 80001) or <strong>Goerli Testnet</strong> (chain ID 5)<br/>
+        Make sure to follow us on <a href={"https://twitter.com/tproofio"} target={"_blank"}>Twitter</a>!
       </Paper>
     </Box>
   );

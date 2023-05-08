@@ -6,10 +6,12 @@ import {useBaseSmartContractWrite, useBaseSmartContractWriteState} from "../../u
 /**
  * @param {string} nftId
  * @param {string} newTitle
+ * @param {string | undefined} [collectionAddress] - f not specified, gets the public one
  */
 export type EditProofTitleParams = {
   nftId: string,
-  newTitle: string
+  newTitle: string,
+  collectionAddress?: string | undefined
 }
 
 /**
@@ -36,8 +38,8 @@ export const useEditProofTitle = (params: EditProofTitleParams): UseEditProofTit
   }, [params]);
 
   const prepareContractWrite = usePrepareContractWrite({
-    address: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ADDRESS,
-    abi: CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ABI,
+    address: params.collectionAddress ? params.collectionAddress : CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ADDRESS,
+    abi: params.collectionAddress ? CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_PRIVATE_NFT_FACTORY_ABI : CONTRACTS_DETAILS[network.chain?.id]?.TPROOF_NFT_FACTORY_ABI,
     functionName: 'updateTitle',
     args: args,
     enabled: doCall

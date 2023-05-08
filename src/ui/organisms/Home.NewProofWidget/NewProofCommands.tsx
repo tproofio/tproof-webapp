@@ -97,7 +97,7 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
       proofs.setProofToBeMinted([]);
       proofs.setMintingTx("");
       proofs.setMintedProofs([]);
-      loadProofsPrivate.loadMore();
+      loadProofsPrivate.reloadEverything();
     }
   }, [generateProofsPrivate.completed, generateProofsPrivate.loading, generateProofsPrivate.txHash])
 

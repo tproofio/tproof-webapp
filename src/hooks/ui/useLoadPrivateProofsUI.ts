@@ -13,7 +13,7 @@ import {ethers} from "ethers";
  *
  * USe this hook only inside ProofContext
  */
-export const useLoadPrivateProofsUI = (addr): { loadMore: () => void } => {
+export const useLoadPrivateProofsUI = (addr): { loadMore: () => void, reloadEverything: () => void } => {
   const network = useNetwork();
   const proofs = useProofs();
 
@@ -92,7 +92,7 @@ export const useLoadPrivateProofsUI = (addr): { loadMore: () => void } => {
         const nftNumber = minProofFetched - pos - 1;
         return {
           id: nftNumber.toString(),
-          chain: network.chain.id === 5 ? Chain.Goerli : Chain.PolygonMainnet,
+          chain: network.chain.id === 5 ? Chain.Goerli : network.chain.id === 80001 ? Chain.Goerli : Chain.PolygonMainnet,
           nftNum: nftNumber,
           title: jsonObject.name,
           description: jsonObject.description,
@@ -115,8 +115,17 @@ export const useLoadPrivateProofsUI = (addr): { loadMore: () => void } => {
     setFetching(true);
   }, []);
 
+  // triggers the load of everything from scratch
+  const reloadEverything = useCallback(async () => {
+    proofs.setMintedProofs([]);
+    await readPrepaidMints.refetch();
+    await readTotalSupplyNft.refetch();
+    setFetching(true);
+  }, [readPrepaidMints, readTotalSupplyNft, proofs]);
+
   return {
     loadMore,
+    reloadEverything
   };
 };
 

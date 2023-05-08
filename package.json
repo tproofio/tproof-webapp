@@ -19,6 +19,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@wagmi/chains": "^0.2.22",
     "@web3modal/ethereum": "2.3.3",
     "@web3modal/react": "2.3.3",
     "alchemy-sdk": "^2.1.1",
