@@ -1,8 +1,8 @@
 import React, {useMemo, useState} from 'react';
 import {Box, Grid, Tooltip, Typography} from "@mui/material";
-import {useAppSelector} from "../../../hooks/redux/reduxHooks";
 import {Edit} from "@mui/icons-material";
 import EditTitleDialog from "./EditTitleDialog";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
 
 /**
  *
@@ -15,13 +15,12 @@ const FileListStep1: React.FC<IFileListStep1> = (props) => {
   const [editToShow, setEditToShow] = useState<number | undefined>(undefined);
   const [showEditTitleDialog, setShowEditTitleDialog] = useState<number>(-1);
 
-  const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
-  const price = useAppSelector(state => state.proof.price);
+  const proofs = useProofs();
 
   const singleFileCost: number[] = useMemo(() => {
 
-    return proofToBeMinted.map(p => p.toBeVerified ? (price.mint+price.verification) : price.mint)
-  }, [proofToBeMinted]);
+    return proofs.data.proofToBeMinted.map(p => p.toBeVerified ? (proofs.data.price.mint+proofs.data.price.verification) : proofs.data.price.mint)
+  }, [proofs.data.proofToBeMinted]);
 
   const totalCost: number = useMemo(() => {
     return singleFileCost.reduce((a, b) => a+b);
@@ -55,7 +54,7 @@ const FileListStep1: React.FC<IFileListStep1> = (props) => {
         </Grid>
       </Grid>
       {
-        proofToBeMinted.map((p, pos) => {
+        proofs.data.proofToBeMinted.map((p, pos) => {
           let hash = `0x${p.hash.substring(0,6)}...${p.hash.substring(p.hash.length-6, p.hash.length)}`;
           let fileName = p.fileName;
           if (fileName.length > 30) {

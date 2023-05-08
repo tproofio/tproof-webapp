@@ -14,7 +14,9 @@ import {theme} from "../../../GlobalStyles";
 import {CHAIN_DETAILS} from "../../../utils/constants";
 import {useNetwork} from "wagmi";
 import {useEditProofTitle} from "../../../hooks/contracts/tProofRouter/useEditProofTitle";
-import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
+import {useLoadPublicProofsUI} from "../../../hooks/ui/useLoadPublicProofsUI";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
+import {useLoadPrivateProofsUI} from "../../../hooks/ui/useLoadPrivateProofsUI";
 
 /**
  *
@@ -24,13 +26,16 @@ import {useLoadProofsUI} from "../../../hooks/ui/useLoadProofsUI";
  */
 const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props) => {
 
+  const proofs = useProofs();
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
   const { chain } = useNetwork();
   const editTitle = useEditProofTitle({
     nftId: props.nftId,
-    newTitle: newTitleTmp
+    newTitle: newTitleTmp,
+    collectionAddress: proofs.data.privateCollectionAddress ? proofs.data.privateCollectionAddress : undefined
   });
-  const loadProofs = useLoadProofsUI();
+  const loadProofs = useLoadPublicProofsUI();
+  const loadProofsPrivate = useLoadPrivateProofsUI(proofs.data.privateCollectionAddress);
 
   const mintingTx = editTitle.txHash;
 
@@ -42,7 +47,10 @@ const EditTitleDescriptionDialog: React.FC<IEditTitleDescriptionDialog> = (props
   useEffect(() => {
     if (editTitle.completed) {
       props.handleClose();
-      loadProofs.loadProofs();
+      if (!proofs.data.privateCollectionAddress)
+        loadProofs.loadProofs();
+      else
+        loadProofsPrivate.reloadEverything();
     }
   }, [editTitle.completed]);
 

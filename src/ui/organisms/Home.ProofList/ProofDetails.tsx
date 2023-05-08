@@ -20,6 +20,7 @@ import EditTitleDescriptionDialog from "./EditTitleDescriptionDialog";
 import {theme} from "../../../GlobalStyles";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useNetwork} from "wagmi";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
 
 /**
  *
@@ -29,6 +30,7 @@ import {useNetwork} from "wagmi";
  */
 const ProofDetails: React.FC<IProofDetails> = (props) => {
 
+  const proofs = useProofs();
   const [expanded, setExpanded] = useState<boolean>(false);
   const [openEditTitleDialog, setOpenEditTitleDialog] = useState<boolean>(false);
 
@@ -40,14 +42,14 @@ const ProofDetails: React.FC<IProofDetails> = (props) => {
   }
 
   const goToEtherscan = () => {
-    let collecttionAddress = CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
+    let collecttionAddress = proofs.data.privateCollectionAddress ? proofs.data.privateCollectionAddress : CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
     window.open(`${CHAIN_DETAILS[chain?.id].EXPLORER_URL}/token/${collecttionAddress}?a=${props.proof.id}`, "_blank");
   }
 
   const goToOpenSea = () => {
     let testnetOs = CHAIN_DETAILS[chain?.id].IS_TESTNET ? "testnets." : "";
     let openseaChainNAme = CHAIN_DETAILS[chain?.id].OPENSEA_CHAIN_NAME;
-    let collecttionAddress = CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
+    let collecttionAddress = proofs.data.privateCollectionAddress ? proofs.data.privateCollectionAddress : CONTRACTS_DETAILS[chain?.id].TPROOF_NFT_FACTORY_ADDRESS;
     window.open(`https://${testnetOs}opensea.io/assets/${openseaChainNAme}/${collecttionAddress}/${props.proof.id}`, "_blank");
   }
 

@@ -12,9 +12,8 @@ import {
   Typography
 } from "@mui/material";
 import {theme} from "../../../GlobalStyles";
-import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
-import {proofReducerActions} from "../../../store/reducers/proof";
 import {CopyAll} from "@mui/icons-material";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
 
 /**
  *
@@ -25,7 +24,7 @@ import {CopyAll} from "@mui/icons-material";
 const EditTitleDialog: React.FC<IEditTitleDialog> = (props) => {
 
   const [newTitleTmp, setNewTitleTmp] = useState<string>("");
-  const dispatch = useAppDispatch();
+  const proofs = useProofs();
 
   /**
    * When opens, set the title as the custom one (if empty, is sets to empty as we want).
@@ -37,10 +36,9 @@ const EditTitleDialog: React.FC<IEditTitleDialog> = (props) => {
 
   const setNewTitle = () => {
     if (newTitleTmp.length > 0) {
-      dispatch(proofReducerActions.editTitleProofToMint({
-        pos: props.position,
-        newTitle: newTitleTmp
-      }));
+      const proofsToBeMinted = proofs.data.proofToBeMinted;
+      proofsToBeMinted[props.position].title = newTitleTmp;
+      proofs.setProofToBeMinted(JSON.parse(JSON.stringify(proofsToBeMinted)));
     }
     props.handleClose();
   }

@@ -11,6 +11,7 @@ export enum StorageType {
 
 export enum Chain {
   Goerli=5,
+  PolygonMumbai=80001,
   PolygonMainnet=137
 }
 
