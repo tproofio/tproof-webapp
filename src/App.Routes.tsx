@@ -4,7 +4,8 @@ import DApp from "./ui/pages/dApp/dApp";
 
 export enum RouteKey {
   Home = "/",
-  dApp = "/dApp"
+  dApp = "/dApp",
+  dAppPrivate = "/dApp/:projectId",
 }
 // list of all the routes of the App
 export const routes = [ {
@@ -12,6 +13,11 @@ export const routes = [ {
   protected: false,
   path: RouteKey.Home,
   component: <Home/>,
+}, {
+  key: RouteKey.dAppPrivate,
+  protected: false,
+  path: RouteKey.dAppPrivate,
+  component: <DApp/>,
 }, {
   key: RouteKey.dApp,
   protected: false,

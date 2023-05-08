@@ -42,6 +42,14 @@ const CommonHeader: React.FC<ICommonHeader> = (props) => {
           :
           ""
       }
+      {
+        chain?.id === 80001 ?
+          <Box width={"100%"} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+            <Chip icon={<Biotech />} color={"secondary"} label="Currently connected on Mumbai Testnet" />
+          </Box>
+          :
+          ""
+      }
     </React.Fragment>
   );
 };

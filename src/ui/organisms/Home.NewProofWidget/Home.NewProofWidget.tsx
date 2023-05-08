@@ -4,7 +4,7 @@ import {useAppDispatch, useAppSelector} from '../../../hooks/redux/reduxHooks';
 import FileListStep0 from "./FileListStep0";
 import NewProofCommands from "./NewProofCommands";
 import FileListStep1 from "./FileListStep1";
-import {proofReducerActions} from "../../../store/reducers/proof";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
 
 /**
  *
@@ -14,30 +14,29 @@ import {proofReducerActions} from "../../../store/reducers/proof";
  */
 const HomeNewProofWidget: React.FC<IHomeNewProofWidget> = (props) => {
 
-  const dispatch = useAppDispatch()
-  const proofToBeMinted = useAppSelector(state => state.proof.proofToBeMinted);
-  const activeStepNum = useAppSelector(state => state.proof.newProofActiveStep);
+  const dispatch = useAppDispatch();
+  const proofs = useProofs();
   const mintingTx = useAppSelector(state => state.proof.mintingTx);
 
   const backToStep0 = () => {
-    dispatch(proofReducerActions.setNewProofActiveStep(0));
+    proofs.setNewProofActiveStep(0);
   }
 
   return (
     <Box display="flex" flexDirection={"column"}
          alignItems={"center"} justifyContent={"center"} width="100%" mt={3}>
 
-      <Stepper activeStep={activeStepNum} alternativeLabel>
+      <Stepper activeStep={proofs.data.newProofActiveStep} alternativeLabel>
         <Step>
           <StepLabel>
-            <Typography sx={{fontWeight: activeStepNum === 0 ? "bold" : undefined}} >
-              Select file {proofToBeMinted.length>0 ? `(${proofToBeMinted.length})` : ""}
+            <Typography sx={{fontWeight: proofs.data.newProofActiveStep === 0 ? "bold" : undefined}} >
+              Select file {proofs.data.proofToBeMinted.length>0 ? `(${proofs.data.proofToBeMinted.length})` : ""}
             </Typography>
           </StepLabel>
         </Step>
         <Step>
           <StepLabel>
-            <Typography sx={{fontWeight: activeStepNum === 1 ? "bold" : undefined}}>
+            <Typography sx={{fontWeight: proofs.data.newProofActiveStep === 1 ? "bold" : undefined}}>
               Generate tProof
             </Typography>
           </StepLabel>
@@ -46,8 +45,8 @@ const HomeNewProofWidget: React.FC<IHomeNewProofWidget> = (props) => {
 
       <Box mt={3} width="80%">
         {
-          proofToBeMinted.length > 0 ?
-            activeStepNum === 0 ?
+          proofs.data.proofToBeMinted.length > 0 ?
+            proofs.data.newProofActiveStep === 0 ?
               <FileListStep0/>
               :
               <Box width="100%">
@@ -62,6 +61,7 @@ const HomeNewProofWidget: React.FC<IHomeNewProofWidget> = (props) => {
             ""
         }
 
+        {/* Buttons to manage commands in the generate proofs process */}
         <NewProofCommands/>
       </Box>
 

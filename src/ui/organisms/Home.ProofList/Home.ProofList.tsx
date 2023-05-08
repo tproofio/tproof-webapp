@@ -1,7 +1,7 @@
 import React from 'react';
-import {useAppSelector} from '../../../hooks/redux/reduxHooks';
 import {Box, CircularProgress, Typography} from "@mui/material";
 import ProofDetails from "./ProofDetails";
+import {useProofs} from "../../../context/Proofs/ProofsProvider";
 
 /**
  *
@@ -11,18 +11,17 @@ import ProofDetails from "./ProofDetails";
  */
 const HomeProofList: React.FC<IHomeProofList> = (props) => {
 
-  const mintedProofs = useAppSelector(state => state.proof.mintedProofs);
-  const mintedProofsLoading = useAppSelector(state => state.proof.mintedProofsLoading);
+  const proofs = useProofs();
 
   return (
     <Box>
       {
-        mintedProofsLoading ?
+        proofs.data.mintedProofsLoading ?
           <Box mt={7} display={"flex"} alignItems={"center"} justifyContent={"center"}>
             <CircularProgress/>
           </Box>
           :
-          mintedProofs.length === 0 ?
+          proofs.data.mintedProofs.length === 0 ?
             // There are no proof int the wallet
             <Box mt={7} display={"flex"} alignItems={"center"} justifyContent={"center"}>
               <Typography maxWidth={250} variant="h4" sx={{textAlign: "center"}}>
@@ -34,7 +33,7 @@ const HomeProofList: React.FC<IHomeProofList> = (props) => {
             // List all the minted proofs
             <Box mt={2}>
               {
-                mintedProofs.map((proof) =>
+                proofs.data.mintedProofs.map((proof) =>
                   <Box key={proof.id}>
                     <ProofDetails proof={proof}/>
                   </Box>

@@ -1,11 +1,11 @@
 import {Box, Button, Grid, Typography, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import CommonHeader from "../../organisms/Common.Header/Common.Header";
 import {theme} from "../../../GlobalStyles";
 import {RouteKey} from "../../../App.Routes";
-import Web3ModalWrapper from "../../atoms/Web3ModalWrapper/Web3ModalWrapper";
 import {useAccount} from "wagmi";
+import {useWeb3Modal} from "@web3modal/react";
 
 /**
  *
@@ -16,13 +16,23 @@ import {useAccount} from "wagmi";
 const Home: React.FC<IHome> = (props) => {
 
   const navigate = useNavigate();
+  const location = useLocation(); // Add this line to get the current location
+  const queryParams = new URLSearchParams(location.search); // Create a URLSearchParams instance
+  const redirectUrl = queryParams.get('redirect'); // Get the 'redirect' query parameter
 
+  const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
   const { address: connectedWalletAddress } = useAccount();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     if (connectedWalletAddress) {
-      navigate(RouteKey.dApp);
+      if (redirectUrl) {
+        // If 'redirect' query parameter exists, navigate to that URL
+        navigate(decodeURIComponent(redirectUrl));
+      } else {
+        // If 'redirect' query parameter doesn't exist, navigate to RouteKey.dApp
+        navigate(RouteKey.dApp);
+      }
     }
   }, [connectedWalletAddress]);
 
@@ -49,11 +59,9 @@ const Home: React.FC<IHome> = (props) => {
             <Typography variant="body1" sx={{textAlign: "center", mt: 2, mb: 2}}>
               Connect your <strong>Web3 wallet</strong> and interact directly with smart contracts. No registration required.
             </Typography>
-            <Web3ModalWrapper>
-              <Button variant="contained">
-                Connect wallet
-              </Button>
-            </Web3ModalWrapper>
+            <Button variant="contained" onClick={() => open()}>
+              Connect wallet
+            </Button>
           </Box>
         </Grid>
 

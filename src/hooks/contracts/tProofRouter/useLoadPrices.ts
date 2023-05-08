@@ -1,8 +1,8 @@
-import {useContract, useContractRead, useNetwork, useProvider} from "wagmi";
+import {useContractRead} from "wagmi";
 import {CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useBaseAsyncHook, useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
+import {useEffect} from "react";
 import {ethers} from "ethers";
-import {useEffect, useState} from "react";
 import {BigNumber} from "@ethersproject/bignumber";
 
 /**
@@ -36,8 +36,8 @@ export const useLoadPrices = (chainId: number): useBaseAsyncHookState<LoadPrices
   // once data il loaded, return
   useEffect(() => {
     if (contractReadMintPrice.data && contractReadVerificationPrice.data) {
-      const mintPrice = contractReadMintPrice.data as BigNumber;
-      const verificationPrice = contractReadVerificationPrice.data as BigNumber;
+      const mintPrice = contractReadMintPrice.data as unknown as BigNumber;
+      const verificationPrice = contractReadVerificationPrice.data as unknown as BigNumber;
       endAsyncActionSuccess({
         mint: parseFloat(ethers.utils.formatEther(mintPrice)),
         verification: parseFloat(ethers.utils.formatEther(verificationPrice))
