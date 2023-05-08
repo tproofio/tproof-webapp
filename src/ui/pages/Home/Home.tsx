@@ -1,6 +1,6 @@
 import {Box, Button, Grid, Typography, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import CommonHeader from "../../organisms/Common.Header/Common.Header";
 import {theme} from "../../../GlobalStyles";
 import {RouteKey} from "../../../App.Routes";
@@ -16,6 +16,9 @@ import {useWeb3Modal} from "@web3modal/react";
 const Home: React.FC<IHome> = (props) => {
 
   const navigate = useNavigate();
+  const location = useLocation(); // Add this line to get the current location
+  const queryParams = new URLSearchParams(location.search); // Create a URLSearchParams instance
+  const redirectUrl = queryParams.get('redirect'); // Get the 'redirect' query parameter
 
   const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
   const { address: connectedWalletAddress } = useAccount();
@@ -23,7 +26,13 @@ const Home: React.FC<IHome> = (props) => {
 
   useEffect(() => {
     if (connectedWalletAddress) {
-      navigate(RouteKey.dApp);
+      if (redirectUrl) {
+        // If 'redirect' query parameter exists, navigate to that URL
+        navigate(decodeURIComponent(redirectUrl));
+      } else {
+        // If 'redirect' query parameter doesn't exist, navigate to RouteKey.dApp
+        navigate(RouteKey.dApp);
+      }
     }
   }, [connectedWalletAddress]);
 

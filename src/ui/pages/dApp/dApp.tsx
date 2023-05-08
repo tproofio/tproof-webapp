@@ -3,7 +3,7 @@ import {Box} from "@mui/material";
 import {isSupportedChainId} from "../../../utils/Tools/Web3Management";
 import CommonHeader from "../../organisms/Common.Header/Common.Header";
 import UnsupportedChainErrorMessage from "../Home/UnsupportedChainErrorMessage";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {RouteKey} from "../../../App.Routes";
 import {useAccount, useNetwork} from "wagmi";
 import ProofsProvider from "../../../context/Proofs/ProofsProvider";
@@ -22,12 +22,16 @@ const DApp: React.FC<IDApp> = (props) => {
   const { chain } = useNetwork();
   const { projectId } = useParams();
 
+  const location = useLocation();
+  const currentUrl = encodeURIComponent(location.pathname + location.search); // Encode current URL
+
+
   const { address: connectedWalletAddress } = useAccount();
 
   useEffect(() => {
     if (!connectedWalletAddress) {
-      // wallet not connected, send back to homepage
-      navigate(RouteKey.Home);
+      // wallet not connected, send back to homepage and include current URL in the query string
+      navigate(`${RouteKey.Home}?redirect=${currentUrl}`);
     }
   }, [connectedWalletAddress]);
 
