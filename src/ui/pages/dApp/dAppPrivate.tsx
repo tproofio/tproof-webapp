@@ -47,41 +47,76 @@ const DAppPrivate: React.FC<IDAppPrivate> = (props) => {
 
 
   return (
-    <Grid container  sx={{mt: 3, mb: 5}} direction={isMobile ? "column-reverse" : "row"}>
-      {
-        loadAddressFromProjectId.completed && loadAddressFromProjectId.result === ethers.constants.AddressZero ?
-          <>
-            <Grid item md={1} sm={0}/>
-            <Grid item md={10} sm={12} xs={12}
-                  display={"flex"} flexDirection={"column"}
+    <Grid container sx={{ mt: 3, mb: 5 }}>
+      <Grid item xs={12} display={"flex"} flexDirection={"column"} alignItems={"center"} mb={3} paddingX={2}>
+        <Typography variant="h2" textAlign={"center"}>
+          Private Collection <strong>{projectId}</strong>
+        </Typography>
+        <Typography variant="body1">
+          Remaining certifications: <strong>{proofs.data.prepaidMint}</strong>
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container direction={isMobile ? "column-reverse" : "row"}>
+          {
+            loadAddressFromProjectId.completed && loadAddressFromProjectId.result === ethers.constants.AddressZero ?
+              <>
+                <Grid item md={1} sm={0} />
+                <Grid
+                  item
+                  md={10}
+                  sm={12}
+                  xs={12}
+                  display={"flex"}
+                  flexDirection={"column"}
                   paddingX={isMobile ? 1 : 4}
-                  marginTop={6} textAlign={"center"}>
-              <Typography variant="h3">Invalid ProjectD</Typography>
-              <Typography variant="body1" mt={2}>The ProjectD <strong>{projectId}</strong> is not a valid project ID registered</Typography>
-            </Grid>
-          </>
-          :
-          <>
-            <Grid item xs={12} display={"flex"} flexDirection={"column"} alignItems={"center"} mb={3}>
-              <Typography variant="h2">Private Collection <strong>{projectId}</strong></Typography>
-              <Typography variant="body1">Remaining certifications: <strong>{proofs.data.prepaidMint}</strong></Typography>
-            </Grid>
-            <Grid item md={1} sm={0}/>
-            <Grid item md={5} sm={12} xs={12} display={"flex"} flexDirection={"column"} paddingX={isMobile ? 1 : 4} marginTop={isMobile ? 6 : 0}>
-              <Typography variant="h3">Your Proofs</Typography>
-              <Box width={"100%"} height={2} sx={{background: theme.palette.text.primary}}/>
-              <HomeProofList/>
-            </Grid>
-            <Grid item md={5} sm={12} xs={12} display={"flex"} flexDirection={"column"} paddingX={isMobile ? 1 : 4}>
-              <Typography variant="h3">Create a new Proof</Typography>
-              <Box width={"100%"} height={2} sx={{background: theme.palette.text.primary}}/>
-              <HomeNewProofWidget/>
-            </Grid>
-          </>
-      }
-      <Grid item md={1} sm={0}/>
+                  marginTop={6}
+                  textAlign={"center"}
+                >
+                  <Typography variant="h3">Invalid ProjectD</Typography>
+                  <Typography variant="body1" mt={2}>
+                    The ProjectD <strong>{projectId}</strong> is not a valid project ID registered
+                  </Typography>
+                </Grid>
+              </>
+              :
+              <>
+                <Grid item md={1} sm={0} />
+                <Grid
+                  item
+                  md={5}
+                  sm={12}
+                  xs={12}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  paddingX={isMobile ? 1 : 4}
+                  marginTop={isMobile ? 6 : 0}
+                >
+                  <Typography variant="h3">Your Proofs</Typography>
+                  <Box width={"100%"} height={2} sx={{ background: theme.palette.text.primary }} />
+                  <HomeProofList />
+                </Grid>
+                <Grid
+                  item
+                  md={5}
+                  sm={12}
+                  xs={12}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  paddingX={isMobile ? 1 : 4}
+                >
+                  <Typography variant="h3">Create a new Proof</Typography>
+                  <Box width={"100%"} height={2} sx={{ background: theme.palette.text.primary }} />
+                  <HomeNewProofWidget />
+                </Grid>
+              </>
+          }
+          <Grid item md={1} sm={0} />
+        </Grid>
+      </Grid>
     </Grid>
   );
+
 };
 
 export interface IDAppPrivate {
