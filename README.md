@@ -42,10 +42,12 @@ Arweva image for ISB - https://arweave.net/lgtigI7EygXCpldVaU2SaQrGZS00Gbl0DDrXe
 
 This project is kept as a public archive. A permanent snapshot of the dApp is stored on Arweave and is accessible to anyone:
 
-- App: https://gateway.irys.xyz/ejFpgo8M4wG09ZXL5yLPnjbMMjbwjskoJ8kh-EPgQzU
-- Manifest ID: `ejFpgo8M4wG09ZXL5yLPnjbMMjbwjskoJ8kh-EPgQzU`
+- App: https://gateway.irys.xyz/BbC93OazRyJeA3aZa_x0GYkYOvBoxAI5ijFchWe70Z0
+- Manifest ID: `BbC93OazRyJeA3aZa_x0GYkYOvBoxAI5ijFchWe70Z0`
 
 The snapshot is provided as-is for archival purposes. No support, maintenance, or affiliation with the original tproof.io team or domain should be inferred.
+
+Proofs are read directly on-chain from the Polygon contracts through the connected wallet. No tproof.io backend (Lambda/Alchemy proxy) is required to browse proofs; the legacy endpoint was replaced in the bundled build.
 
 ## Deploying this snapshot
 
