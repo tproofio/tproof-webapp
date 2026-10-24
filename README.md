@@ -1,5 +1,11 @@
 # tProof.io dApp
 
+> **⚠️ ARCHIVED**
+>
+> This repository is archived and read-only. **tproof.io is no longer associated with it.**
+> The dApp is preserved on Arweave:
+> https://gateway.irys.xyz/BW_BztlNLblqValcwGMqjUUdAgBDBb9PlU--q_SUy90
+
 This repo contains the code for the frontend dApp to access Pythia results.
 
 ## Project creation
