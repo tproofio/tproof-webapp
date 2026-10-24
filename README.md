@@ -42,8 +42,8 @@ Arweva image for ISB - https://arweave.net/lgtigI7EygXCpldVaU2SaQrGZS00Gbl0DDrXe
 
 This project is kept as a public archive. A permanent snapshot of the dApp is stored on Arweave and is accessible to anyone:
 
-- App: https://gateway.irys.xyz/11yB2woMce8jp88Oy9bbbOQscUbyI9QUcaNaYIa4b5g
-- Manifest ID: `11yB2woMce8jp88Oy9bbbOQscUbyI9QUcaNaYIa4b5g`
+- App: https://gateway.irys.xyz/ejFpgo8M4wG09ZXL5yLPnjbMMjbwjskoJ8kh-EPgQzU
+- Manifest ID: `ejFpgo8M4wG09ZXL5yLPnjbMMjbwjskoJ8kh-EPgQzU`
 
 The snapshot is provided as-is for archival purposes. No support, maintenance, or affiliation with the original tproof.io team or domain should be inferred.
 
