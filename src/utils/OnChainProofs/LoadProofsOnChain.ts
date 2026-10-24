@@ -5,7 +5,8 @@ import {LoadProofsOnChainResult, OnChainOwnedNft} from "./LoadProofsOnChain.type
 const POLYGON_CHAIN_ID = 137;
 
 /** tokenId layout used by the contracts: chain * 10^50 + nftNum. */
-const TOKEN_ID_CHAIN_FACTOR = BigInt(10) ** BigInt(50);
+// 10^50 built without "**": bigint exponentiation needs target >= es2016.
+const TOKEN_ID_CHAIN_FACTOR = BigInt("1" + "0".repeat(50));
 
 /** Public Polygon RPCs, tried in order. All of them expose CORS. */
 const RPC_ENDPOINTS = [

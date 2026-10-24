@@ -1,7 +1,7 @@
 import {Proof} from "../../../utils/ProjectTypes/Project.types";
 import {useAccount} from "wagmi";
 import {fromTokenIdToChain} from "../../../utils/Tools/Web3Management";
-import {ProofVerificationStatus} from "../../../utils/ProjectTypes/Project.enum";
+import {FileMIMEType, ProofVerificationStatus, StorageType} from "../../../utils/ProjectTypes/Project.enum";
 import {useBaseAsyncHook, useBaseAsyncHookState} from "../../utils/useBaseAsyncHook";
 import {loadProofsOnChain} from "../../../utils/OnChainProofs/LoadProofsOnChain";
 
@@ -54,9 +54,10 @@ export const useLoadProofs = (chainId: number):  UseLoadProofsResponse => {
             createdAt: parseInt(createdAt.value),
             description: r.description,
             verificationStatus: verificationStatus,
-            MIMEType: r.rawMetadata.attributes.find(e => e.trait_type === "MIME Type").value,
+            // tokenURI returns plain strings; the proof model uses the enum for MIME types.
+            MIMEType: r.rawMetadata.attributes.find(e => e.trait_type === "MIME Type").value as unknown as FileMIMEType,
             fileUrl: r.rawMetadata.external_url,
-            storageType: r.rawMetadata.attributes.find(e => e.trait_type === "Storage Type").value,
+            storageType: r.rawMetadata.attributes.find(e => e.trait_type === "Storage Type").value as unknown as StorageType,
             verificationFailed: verificationFailedString === "true"
           })
         }
