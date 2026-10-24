@@ -1,11 +1,8 @@
 import React, {useEffect} from 'react';
 import {Box, Button, Typography} from "@mui/material";
-import {useAppDispatch} from "../../../hooks/redux/reduxHooks";
-import {proofReducerActions} from "../../../store/reducers/proof";
 import {useFileListCache} from "../../../hooks/utils/fileListHook";
 import {CHAIN_DETAILS, CONTRACTS_DETAILS} from "../../../utils/constants";
 import {useAccount, useNetwork} from "wagmi";
-import {useUploadFiles} from "../../../hooks/aws/s3/useUploadFiles";
 import {useGenerateProofs} from "../../../hooks/contracts/tProofRouter/useGenerateProofs";
 import {useLoadPublicProofsUI} from "../../../hooks/ui/useLoadPublicProofsUI";
 import {useProofs} from "../../../context/Proofs/ProofsProvider";
@@ -22,14 +19,12 @@ import {useLoadPrivateProofsUI} from "../../../hooks/ui/useLoadPrivateProofsUI";
  */
 const NewProofCommands: React.FC<INewProofCommands> = (props) => {
 
-  const dispatch = useAppDispatch();
   const fileListCache = useFileListCache();
 
   const proofs = useProofs();
 
   const { address: connectedWalletAddress } = useAccount();
   const { chain } = useNetwork();
-  const useUploadFilesObj = useUploadFiles();
   const generateProofs = useGenerateProofs({
     proofs: proofs.data.proofToBeMinted,
     delegatorAddress: CONTRACTS_DETAILS[chain?.id]?.DELEGATOR_ADDRESS,
@@ -42,40 +37,8 @@ const NewProofCommands: React.FC<INewProofCommands> = (props) => {
   const loadProofs = useLoadPublicProofsUI();
   const loadProofsPrivate = useLoadPrivateProofsUI(proofs.data.privateCollectionAddress);
 
-  // launch the upload of objects on S3
-  useEffect(() => {
-    if (proofs.data.uploadingFileToPublish) {
-      let uploadObjects = [];
-      for (let pi in proofs.data.proofToBeMinted) {
-        let p = proofs.data.proofToBeMinted[pi];
-        if (p.toBeVerified)
-          uploadObjects.push({
-            pos: pi,
-            file: fileListCache.getFileItem(p.id),
-            hash: p.hash,
-            MIMEType: "-",
-            storageType: "ArweaveV1"
-          });
-      }
-      useUploadFilesObj.upload(uploadObjects);
-    }
-  }, [proofs.data.uploadingFileToPublish]);
-
-  // update the upload percentage
-  useEffect(() => {
-    useUploadFilesObj.uploadPerc.forEach( el =>
-      dispatch(proofReducerActions.setUploadPerc({pos: el.pos, perc: el.perc}))
-    )
-  }, [useUploadFilesObj.uploadPerc]);
-
-  // when upload completes, go to step 1 and set the upload files completed
-  useEffect(() => {
-    if (useUploadFilesObj.completed) {
-      dispatch(proofReducerActions.toggleUploadingFileToPublish(false));
-      proofs.setNewProofActiveStep(1);
-    }
-  }, [useUploadFilesObj.completed])
-
+  // The off-chain S3 upload was removed together with the tproof backend, so
+  // file-backed proofs are no longer pinned. Creating proofs remains hash-only.
   // manages the states of public tx minting
   useEffect(() => {
     if (generateProofs.loading)

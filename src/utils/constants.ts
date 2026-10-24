@@ -67,6 +67,4 @@ export const CHAIN_DETAILS: {5: ChainDetails, 80001: ChainDetails, 137: ChainDet
   }
 };
 export const MAX_FILE_SIZE_SUPPORTED_BYTES = 100000000;  //100 MB is the max supported file size so far  // TODO implement this check
-export const AWS_S3_KEY_ID = "AKIAY6R3RXNBLZY7VUQI";
-export const AWS_S3_PRIVATE_KEY = "AtwZgqhCGAJx1gGnAfv/uaObJ/+73X7f7Nv8U0/K";  // these credentials are for upload only on a internal readOnly bucket on s3. No risks of keeping them here
 export const SUPPORTED_CHAIN_IDs = [0,5,80001,137];  // 0 means wallet not connected yet
