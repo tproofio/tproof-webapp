@@ -35,3 +35,25 @@ Project documentation can be accessed on [Gitbook docs](https://docs.tproof.io)
 
 
 Arweva image for ISB - https://arweave.net/lgtigI7EygXCpldVaU2SaQrGZS00Gbl0DDrXes3Jlno
+
+## Archived public deployment
+
+**tproof.io is no longer associated with this repository or with the deployment below.**
+
+This project is kept as a public archive. A permanent snapshot of the dApp is stored on Arweave and is accessible to anyone:
+
+- App: https://gateway.irys.xyz/OiDzC3mp4mvK7G-LbePx8j0QApXsWnVSYaGcQdnc-5A
+- Manifest ID: `OiDzC3mp4mvK7G-LbePx8j0QApXsWnVSYaGcQdnc-5A`
+
+The snapshot is provided as-is for archival purposes. No support, maintenance, or affiliation with the original tproof.io team or domain should be inferred.
+
+## Deploying this snapshot
+
+The static build is uploaded to Arweave with the Irys SDK. Payment can be made in AR (`-t arweave`) or directly on Base in native ETH (`-t base-eth`):
+
+```bash
+npm install -g @irys/sdk
+irys upload-dir build/ -w ./wallet.json --index-file index.html -t arweave
+```
+
+`wallet.json` holds the Arweave private key and is gitignored: never commit or share it.

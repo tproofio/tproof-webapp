@@ -2,3 +2,7 @@ node_modules
 .idea
 yarn.lock
 build
+
+# Arweave deploy key: contains the RSA private key for the Irys/Arweave wallet.
+# This repo is public, so the key must never be committed.
+wallet.json
